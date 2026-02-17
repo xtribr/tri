@@ -1,0 +1,30 @@
+{
+  "exame": "ENEM",
+  "anos_disponiveis": [
+    2009,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+  ],
+  "areas": [
+    "CH",
+    "CN",
+    "LC",
+    "MT"
+  ],
+  "colunas_tabela": [
+    "acertos",
+    "notaMin",
+    "notaMed",
+    "notaMax"
+  ],
+  "arquivo_dados": "docs/TRI ENEM DE 2009 A 2023 MIN MED E MAX.xlsx",
+  "ultima_atualizacao": "2024-01-01",
+  "fonte": "INEP - Microdados ENEM"
+}

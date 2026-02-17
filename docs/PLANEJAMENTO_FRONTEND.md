@@ -670,6 +670,180 @@ gerar_tabela_enem <- function(mod, n_itens) {
 
 ---
 
+## 📚 Presets de Referência Históricos (ENEM 2009-2023)
+
+**Baseado em:** `docs/TRI ENEM DE 2009 A 2023 MIN MED E MAX.xlsx`
+
+Arquivo Excel com tabelas de conversão oficiais do ENEM de 2009 a 2023, todas as áreas (CH, CN, LC, MT).
+
+### Estrutura dos Dados
+
+```json
+// config/presets_enem_historico.json
+{
+  "2023": {
+    "ano": 2023,
+    "exame": "ENEM",
+    "modelo": "3PL",
+    "metodo": "EAP",
+    "escala": {"min": 0, "max": 1000},
+    "areas": {
+      "CH": {
+        "n_itens": 45,
+        "tabela": [
+          {"acertos": 0, "notaMin": 300.0, "notaMed": 305.1, "notaMax": 310.2},
+          {"acertos": 1, "notaMin": 310.5, "notaMed": 318.3, "notaMax": 326.1},
+          // ... até 45 acertos
+        ],
+        "stats": {
+          "nota_min_geral": 300.0,
+          "nota_max_geral": 839.2,
+          "media_geral": 562.3
+        }
+      },
+      "CN": { ... },
+      "LC": { ... },
+      "MT": { ... }
+    }
+  },
+  "2022": { ... },
+  "2021": { ... },
+  // ... até 2009
+}
+```
+
+### Presets Disponíveis no Frontend
+
+```typescript
+// stores/referencePresets.ts
+
+// Anos disponíveis
+export const ENEM_YEARS = [2009, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023];
+
+// Áreas do ENEM
+export const ENEM_AREAS = [
+  { code: 'CH', name: 'Ciências Humanas', color: '#FF3B30' },
+  { code: 'CN', name: 'Ciências da Natureza', color: '#34C759' },
+  { code: 'LC', name: 'Linguagens e Códigos', color: '#0071E3' },
+  { code: 'MT', name: 'Matemática', color: '#FF9500' }
+];
+
+// Hook para acessar presets
+export const useENEMPresets = () => {
+  const [selectedYear, setSelectedYear] = useState(2023);
+  const [selectedArea, setSelectedArea] = useState('CH');
+  
+  const currentTable = useMemo(() => {
+    return loadPreset('ENEM', selectedYear, selectedArea);
+  }, [selectedYear, selectedArea]);
+  
+  const compareYears = (year1: number, year2: number) => {
+    return comparePresets('ENEM', year1, year2, selectedArea);
+  };
+  
+  return { selectedYear, selectedArea, currentTable, compareYears };
+};
+```
+
+### Componente de Seleção de Preset
+
+```tsx
+// components/presets/PresetSelector.tsx
+
+<PresetSelector
+  examType="ENEM"
+  availableYears={[2019, 2020, 2021, 2022, 2023]}
+  defaultYear={2023}
+  areas={['CH', 'CN', 'LC', 'MT']}
+  onChange={(config) => {
+    // config = { year: 2023, area: 'CH', table: {...} }
+    setReferenceTable(config.table);
+  }}
+  showComparison={true}  // Mostrar vs ano anterior
+/>
+```
+
+### Uso em Análises
+
+**Cenário 1: Simulado baseado no ENEM 2023**
+```tsx
+// Usuário seleciona preset
+const preset = await loadPreset('ENEM', 2023, 'CH');
+
+// Sistema calcula notas dos candidatos usando essa tabela
+const notas = candidatos.map(c => {
+  const linha = preset.tabela.find(t => t.acertos === c.acertos);
+  return {
+    ...c,
+    nota: linha.notaMed,
+    notaMin: linha.notaMin,
+    notaMax: linha.notaMax
+  };
+});
+```
+
+**Cenário 2: Comparação entre anos**
+```tsx
+// Comparar desempenho 2022 vs 2023
+const table2022 = loadPreset('ENEM', 2022, 'CH');
+const table2023 = loadPreset('ENEM', 2023, 'CH');
+
+// Análise: Para 25 acertos, qual a diferença?
+const diff = table2023.tabela[25].notaMed - table2022.tabela[25].notaMed;
+// Resultado: "2023 foi X pontos mais difícil/fácil"
+```
+
+### Dashboard de Presets
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  📚 Presets de Referência - ENEM                            │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Selecionar Ano: [2023 ▼]  Área: [CH ▼]        [Comparar]  │
+│                                                             │
+│  📊 Tabela de Conversão - ENEM 2023 - Ciências Humanas     │
+│  ┌───────┬────────┬────────┬────────┬─────────────────────┐│
+│  │Acertos│ Nota   │  Min   │  Máx   │ vs 2022             ││
+│  ├───────┼────────┼────────┼────────┼─────────────────────┤│
+│  │   20  │ 498.5  │ 492.1  │ 504.9  │  +5.3  🟢          ││
+│  │   25  │ 542.8  │ 537.2  │ 548.4  │  +2.1  🟢          ││
+│  │   30  │ 601.2  │ 595.8  │ 606.6  │  -3.4  🔴          ││
+│  └───────┴────────┴────────┴────────┴─────────────────────┘│
+│                                                             │
+│  📈 Evolução da Dificuldade (2020-2023)                     │
+│  [Gráfico de linhas mostrando nota média ao longo dos anos] │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Carregamento Otimizado
+
+```typescript
+// Estratégia de carregamento
+const loadPresetStrategy = {
+  // 1. Carregar índice (metadados) - pequeno
+  loadIndex: async () => {
+    const response = await fetch('/config/presets_enem_index.json');
+    return response.json(); // { anos: [...], areas: [...] }
+  },
+  
+  // 2. Carregar preset específico sob demanda
+  loadPreset: async (year: number, area: string) => {
+    const response = await fetch(`/config/presets_enem_historico.json`);
+    const allPresets = await response.json();
+    return allPresets[year].areas[area];
+  },
+  
+  // 3. Cache no localStorage
+  cachePreset: (year, area, data) => {
+    localStorage.setItem(`preset_enem_${year}_${area}`, JSON.stringify(data));
+  }
+};
+```
+
+---
+
 ## 🗂️ Versionamento de Tabelas de Referência
 
 **Problema:** Tabelas ENEM mudam a cada ano (ENEM-2024-dificuldades.pdf, ENEM-2025, etc.)
