@@ -57,16 +57,23 @@ export default function DashboardPage() {
     setErro(null);
     
     try {
+      console.log('[Dashboard] Iniciando calibração...', { modelo, n_candidatos: upload.n_candidatos, n_itens: upload.n_itens });
+      
       // Chamar API real
       const result = await calibrarItens(upload.dados, modelo);
+      console.log('[Dashboard]Calibração concluída:', result);
       setCalibracao(result);
       
       // Estimar escores individuais
+      console.log('[Dashboard] Estimando escores...');
       const scores = await estimarEscores(upload.dados, result.itens, 'EAP');
+      console.log('[Dashboard] Escores estimados:', scores.length);
       setEscores(scores);
     } catch (error) {
-      console.error('Erro na calibração:', error);
-      setErro(error instanceof Error ? error.message : 'Erro desconhecido na calibração');
+      console.error('[Dashboard] Erro na calibração:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido na calibração';
+      setErro(errorMessage);
+      console.log('[Dashboard] Usando dados mock como fallback');
       
       // Fallback para mock em caso de erro
       setCalibracao({

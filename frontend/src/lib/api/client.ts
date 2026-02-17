@@ -13,11 +13,10 @@ import type {
   CalibratedItem,
 } from '@/types';
 
-// Em dev, usa o proxy do Next.js para evitar CORS
-const isBrowser = typeof window !== 'undefined';
-const API_BASE_URL = isBrowser && process.env.NODE_ENV === 'development' 
-  ? '/api'  // Usa proxy do Next.js
-  : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000');
+// Sempre usar o proxy do Next.js para evitar CORS
+const API_BASE_URL = '/api';
+
+console.log('[API] Base URL:', API_BASE_URL, '| Environment:', process.env.NODE_ENV);
 
 // Cliente Axios configurado
 const apiClient: AxiosInstance = axios.create({
@@ -28,19 +27,34 @@ const apiClient: AxiosInstance = axios.create({
   },
 });
 
-// Interceptores
+// Interceptores com logs detalhados
 apiClient.interceptors.request.use(
   (config) => {
-    console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
+    console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`, {
+      data: config.data ? { ...config.data, dados: config.data.dados ? `[${config.data.dados.length} rows]` : undefined } : undefined
+    });
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    console.error('[API Request Error]', error);
+    return Promise.reject(error);
+  }
 );
 
 apiClient.interceptors.response.use(
-  (response: AxiosResponse) => response,
+  (response: AxiosResponse) => {
+    console.log(`[API Response] ${response.config.method?.toUpperCase()} ${response.config.url} - Status: ${response.status}`);
+    return response;
+  },
   (error: AxiosError) => {
-    console.error('[API Error]', error.response?.data || error.message);
+    console.error('[API Response Error]', {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      message: error.message,
+    });
     return Promise.reject(error);
   }
 );
@@ -56,9 +70,26 @@ function handleResponse<T>(response: AxiosResponse): T {
 function handleError(error: unknown): never {
   if (axios.isAxiosError(error)) {
     const message = error.response?.data?.error || error.message;
-    throw new Error(`API Error: ${message}`);
+    const status = error.response?.status;
+    throw new Error(`API Error ${status}: ${message}`);
   }
   throw error;
+}
+
+// Retry wrapper
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  retries: number = 3,
+  delay: number = 1000
+): Promise<T> {
+  try {
+    return await fn();
+  } catch (error) {
+    if (retries <= 0) throw error;
+    console.log(`[API] Retry attempt, ${retries} left`);
+    await new Promise(r => setTimeout(r, delay));
+    return withRetry(fn, retries - 1, delay * 2);
+  }
 }
 
 // ============================================
@@ -81,16 +112,20 @@ export async function calibrarItens(
     c?: number;
   }>
 ): Promise<CalibrationResult> {
-  try {
-    const response = await apiClient.post('/calibrar', {
-      dados,
-      modelo,
-      ancoras: ancoras || [],
-    });
-    return handleResponse<CalibrationResult>(response);
-  } catch (error) {
-    handleError(error);
-  }
+  return withRetry(async () => {
+    try {
+      const response = await apiClient.post('/calibrar/v2', {
+        dados,
+        modelo,
+        ancoras: ancoras || [],
+        tct_preliminar: true,
+        estatisticas_ajuste: true,
+      });
+      return handleResponse<CalibrationResult>(response);
+    } catch (error) {
+      handleError(error);
+    }
+  }, 2, 500);
 }
 
 /**
@@ -127,16 +162,18 @@ export async function estimarEscores(
   itens: CalibratedItem[],
   metodo: string = 'EAP'
 ): Promise<ScoringResult[]> {
-  try {
-    const response = await apiClient.post('/scoring/estimar', {
-      respostas,
-      itens,
-      metodo,
-    });
-    return handleResponse<ScoringResult[]>(response);
-  } catch (error) {
-    handleError(error);
-  }
+  return withRetry(async () => {
+    try {
+      const response = await apiClient.post('/scoring/estimar', {
+        respostas,
+        itens,
+        metodo,
+      });
+      return handleResponse<ScoringResult[]>(response);
+    } catch (error) {
+      handleError(error);
+    }
+  }, 2, 500);
 }
 
 /**
@@ -170,16 +207,18 @@ export async function iniciarSessaoCAT(
   modelo: string = 'Rasch',
   config?: CATConfig
 ): Promise<CATSession> {
-  try {
-    const response = await apiClient.post('/cat/sessao/iniciar', {
-      itens_disponiveis,
-      modelo,
-      config,
-    });
-    return handleResponse<CATSession>(response);
-  } catch (error) {
-    handleError(error);
-  }
+  return withRetry(async () => {
+    try {
+      const response = await apiClient.post('/cat/sessao/iniciar', {
+        itens_disponiveis,
+        modelo,
+        config,
+      });
+      return handleResponse<CATSession>(response);
+    } catch (error) {
+      handleError(error);
+    }
+  }, 2, 500);
 }
 
 /**
@@ -189,12 +228,14 @@ export async function iniciarSessaoCAT(
 export async function selecionarProximoItem(
   sessao_id: string
 ): Promise<{ item_cod: string; theta_atual: number; erro_padrao: number }> {
-  try {
-    const response = await apiClient.post(`/cat/sessao/${sessao_id}/proximo_item`);
-    return handleResponse(response);
-  } catch (error) {
-    handleError(error);
-  }
+  return withRetry(async () => {
+    try {
+      const response = await apiClient.post(`/cat/sessao/${sessao_id}/proximo_item`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  }, 2, 500);
 }
 
 /**
@@ -208,15 +249,17 @@ export async function responderItemCAT(
   item_cod: string,
   resposta: 0 | 1
 ): Promise<CATSession> {
-  try {
-    const response = await apiClient.post(`/cat/sessao/${sessao_id}/responder`, {
-      item_cod,
-      resposta,
-    });
-    return handleResponse<CATSession>(response);
-  } catch (error) {
-    handleError(error);
-  }
+  return withRetry(async () => {
+    try {
+      const response = await apiClient.post(`/cat/sessao/${sessao_id}/responder`, {
+        item_cod,
+        resposta,
+      });
+      return handleResponse<CATSession>(response);
+    } catch (error) {
+      handleError(error);
+    }
+  }, 2, 500);
 }
 
 // ============================================
@@ -227,24 +270,28 @@ export async function responderItemCAT(
  * Calcula estatísticas descritivas dos dados
  */
 export async function calcularEstatisticas(dados: number[][]) {
-  try {
-    const response = await apiClient.post('/estatisticas/descritivas', { dados });
-    return handleResponse(response);
-  } catch (error) {
-    handleError(error);
-  }
+  return withRetry(async () => {
+    try {
+      const response = await apiClient.post('/estatisticas/descritivas', { dados });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  }, 2, 500);
 }
 
 /**
  * Calcula coeficiente alpha de Cronbach
  */
 export async function calcularAlphaCronbach(dados: number[][]): Promise<number> {
-  try {
-    const response = await apiClient.post('/estatisticas/alpha', { dados });
-    return handleResponse<number>(response);
-  } catch (error) {
-    handleError(error);
-  }
+  return withRetry(async () => {
+    try {
+      const response = await apiClient.post('/estatisticas/alpha', { dados });
+      return handleResponse<number>(response);
+    } catch (error) {
+      handleError(error);
+    }
+  }, 2, 500);
 }
 
 // ============================================

@@ -15,6 +15,9 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  
+  // Desabilitar strict mode temporariamente para evitar double fetch
+  reactStrictMode: false,
 };
 
 export default nextConfig;

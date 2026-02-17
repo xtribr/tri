@@ -22,8 +22,8 @@ interface NavItem {
 const mainNavItems: NavItem[] = [
   { label: 'Upload de Dados', href: '/upload', icon: FileUp },
   { label: 'Dashboard', href: '/dashboard', icon: BarChart3 },
-  { label: 'Análise por Área', href: '/analysis', icon: Database },
-  { label: 'Tendências', href: '/trends', icon: TrendingUp },
+  { label: 'Análise TRI', href: '/analysis', icon: Database },
+  { label: 'Comparativo ENEM', href: '/comparativo', icon: TrendingUp },
 ];
 
 const secondaryNavItems: NavItem[] = [

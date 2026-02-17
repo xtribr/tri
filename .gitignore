@@ -35,3 +35,5 @@ __pycache__/
 
 # Diretórios de output muito grandes (opcional - remover se quiser versionar tudo)
 # output/simulacao_40k/resultados_40k_candidatos.csv
+microdados/
+output/enem/*.json
