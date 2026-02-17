@@ -1,0 +1,61 @@
+============================================================
+  RELATÓRIO COMPARATIVO: SIMULADO vs ENAMED OFICIAL 2025
+============================================================
+
+1. AMOSTRAS ANALISADAS
+   - ENAMED Oficial:  49.745  candidatos
+   - Simulado SPRMED:  591  candidatos
+
+2. ESTATÍSTICAS DESCRITIVAS COMPARADAS
+   -------------------------------------------------------
+   Métrica                     ENAMED     Simulado
+   -------------------------------------------------------
+   Média acertos                 59.3         58.2
+   DP acertos                     10.0         13.9
+   Mediana acertos                59.0         59.0
+   Nota média                    68.6         53.4
+   DP nota                        10.2         22.8
+   -------------------------------------------------------
+
+3. ANÁLISE DE PERCENTIS
+   -------------------------------------------------------
+   Percentil        ENAMED     Simulado
+   -------------------------------------------------------
+   10%                46.0         40.0
+   25%                52.0         50.0
+   50%                59.0         59.0
+   75%                67.0         67.0
+   90%                73.0         75.0
+   -------------------------------------------------------
+
+4. SIMILARIDADE DAS DISTRIBUIÇÕES
+   - Teste Kolmogorov-Smirnov:
+     Estatística D: 0.1134
+     p-valor: 0.0001
+   - Conclusão: As distribuições são DIFERENTES
+
+5. QUALIDADE DOS ITENS DO SIMULADO
+   - Total de itens analisados: 100
+   - Correlação bisserial média: 0.268
+   - Itens com alta discriminação (≥0.30): 37 (37.0%)
+   - Itens com baixa discriminação (<0.20): 17 (17.0%)
+
+6. PONTOS FORTES DO SIMULADO
+   ✓ Amostra representativa (591 candidatos)
+   ✓ Boa variabilidade de escores (DP = 13.9 )
+   ✓ Itens com boa capacidade discriminatória
+
+7. OPORTUNIDADES DE MELHORIA
+   ⚠ 17 itens com baixa discriminação (< 0.20)
+     Sugestão: Revisar ou substituir estes itens
+
+8. RECOMENDAÇÕES PARA PRÓXIMAS EDIÇÕES
+   1. Manter itens com r_biserial > 0.25
+   2. Substituir itens com r_biserial < 0.15
+   3. Balancear dificuldade para média ~50-60 acertos
+   4. Manter variabilidade (DP > 12)
+   5. Validar com método Angoff para definição de cortes
+
+============================================================
+  Relatório gerado em:  17/02/2026 17:23 
+============================================================

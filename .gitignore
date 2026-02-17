@@ -1,0 +1,37 @@
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Arquivos temporários
+*.tmp
+*.temp
+*.log
+
+# Arquivos grandes de dados (manter apenas scripts e resultados processados)
+*.rds
+*.RData
+*.rda
+
+# Exceto modelos importantes (comentado - descomente se quiser ignorar)
+# output/correcao_enamed/modelo_rasch.rds
+# output/simulacao_40k/modelo_rasch_40k.rds
+
+# Arquivos Excel temporários
+~$*.xlsx
+~$*.xls
+
+# Logs
+tests/logs/
+
+# Arquivos de cache
+__pycache__/
+*.pyc
+.Rproj.user
+.Rhistory
+.Renviron
+
+# Diretórios de output muito grandes (opcional - remover se quiser versionar tudo)
+# output/simulacao_40k/resultados_40k_candidatos.csv
