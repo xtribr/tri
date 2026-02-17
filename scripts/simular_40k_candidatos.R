@@ -1,10 +1,52 @@
 #!/usr/bin/env Rscript
-# Simulação de 40.000 candidatos baseada nos parâmetros calibrados do simulado
-# Usa modelo Rasch 1PL para gerar respostas e calcular estatísticas
+# =============================================================================
+# SIMULAÇÃO DE 40.000 CANDIDATOS - VALIDAÇÃO EM ESCALA
+# =============================================================================
+#
+# DESCRIÇÃO:
+#   Este script simula 40.000 candidatos respondendo ao simulado para validar
+#   a qualidade dos itens em amostras grandes e comparar com o ENAMED oficial.
+#
+# OBJETIVOS:
+#   1. Validar que os 100 itens funcionam bem em amostras grandes
+#   2. Verificar se a qualidade melhora com n=40k vs n=591
+#   3. Comparar distribuição de escores com ENAMED oficial
+#   4. Gerar evidências de que a prova é apta para aplicação em escala
+#
+# METODOLOGIA:
+#   - Usa parâmetros b calibrados no simulado real (591 candidatos)
+#   - Gera thetas de distribuição normal (baseada nos reais)
+#   - Simula respostas segundo modelo Rasch 1PL
+#   - Recalibra modelo e compara parâmetros
+#
+# ENTRADA:
+#   - output/correcao_enamed/modelo_rasch.rds: Parâmetros calibrados
+#   - output/correcao_enamed/resultado_candidatos.csv: Thetas reais
+#
+# SAÍDA:
+#   - output/simulacao_40k/resultados_40k_candidatos.csv: Notas simuladas
+#   - output/simulacao_40k/estatisticas_tct_40k.csv: TCT na amostra grande
+#   - output/simulacao_40k/comparacao_enamed_40k.csv: Comparação estatística
+#   - output/simulacao_40k/modelo_rasch_40k.rds: Modelo recalibrado
+#
+# RESULTADOS ESPERADOS:
+#   - r_biserial médio deve aumentar (estimativas mais precisas)
+#   - Nenhum item problemático (todos discriminam bem)
+#   - Distribuição similar ao ENAMED oficial
+#
+# NOTAS PARA MANUTENÇÃO:
+#   - Se mudar de modelo (2PL/3PL), adaptar função prob_rasch()
+#   - Para simulações maiores (100k+), considerar paralelização
+#   - O seed (42) garante reprodutibilidade
+#
+# REFERÊNCIAS:
+#   - mirt::simdata(): Função nativa de simulação (alternativa)
+#   - Lord (1980): Applications of Item Response Theory
+# =============================================================================
 
 suppressPackageStartupMessages({
-  library(mirt)
-  library(dplyr)
+  library(mirt)    # Pacote TRI
+  library(dplyr)   # Manipulação de dados
 })
 
 cat("============================================================\n")
@@ -63,25 +105,52 @@ cat(sprintf("    - Theta médio simulado: %.3f (DP: %.3f)\n",
 # ============================================================================
 # 3. SIMULAR RESPOSTAS (Rasch 1PL)
 # ============================================================================
+#
+# PROCESSO DE SIMULAÇÃO:
+#   1. Calcular probabilidade de acerto para cada (theta, item)
+#   2. Gerar número aleatório U ~ Uniforme(0,1)
+#   3. Se U < P, resposta = 1 (acerto), senão 0 (erro)
+#
+# FÓRMULA DO MODELO RASCH:
+#   P(X=1|θ,b) = 1 / (1 + exp(-(θ - b)))
+#
+#   Onde:
+#   - θ = habilidade do candidato (gerado na etapa anterior)
+#   - b = dificuldade do item (parâmetro calibrado)
+#   - P = probabilidade de acertar o item
+#
+# ALTERNATIVA (pacote mirt):
+#   mirt::simdata(a, b, N, itemtype="Rasch")
+#   Vantagem: mais rápido, já otimizado
+#   Desvantagem: menos controle sobre o processo
+#
+# POR QUE SIMULAR EM VEZ DE USAR DADOS REAIS?
+#   - Permite controlar os parâmetros verdadeiros
+#   - Permite avaliar a recuperação dos parâmetros
+#   - Permite testar a prova antes de aplicar em escala
+# ============================================================================
+
 cat("\n[3/6] Simulando respostas aos itens (Rasch 1PL)...\n")
 
-# Função de probabilidade do modelo Rasch
+# Função de probabilidade do modelo Rasch 1PL
 prob_rasch <- function(theta, b) {
+  # Fórmula: P = 1 / (1 + exp(-(theta - b)))
   1 / (1 + exp(-(theta - b)))
 }
 
-# Gerar matriz de respostas
+# Função para simular respostas segundo modelo Rasch
 simular_respostas <- function(thetas, b_params) {
   n_pessoas <- length(thetas)
   n_itens <- length(b_params)
   
-  # Matriz de probabilidades
+  # Matriz de probabilidades P[i,j] = prob(candidato i acertar item j)
   P <- matrix(0, nrow = n_pessoas, ncol = n_itens)
   for (i in 1:n_pessoas) {
     P[i, ] <- prob_rasch(thetas[i], b_params)
   }
   
-  # Simular respostas (0 ou 1) baseado nas probabilidades
+  # Simular respostas usando método da transformada inversa
+  # U ~ Uniforme(0,1); se U < P, acerto (1), senão erro (0)
   U <- matrix(runif(n_pessoas * n_itens), nrow = n_pessoas, ncol = n_itens)
   respostas <- ifelse(U < P, 1, 0)
   
@@ -89,6 +158,7 @@ simular_respostas <- function(thetas, b_params) {
   return(respostas)
 }
 
+# Gerar matriz de respostas (40.000 × 100)
 matriz_respostas <- simular_respostas(thetas_sim, parametros_b)
 
 cat(sprintf("    ✓ Matriz de respostas: %d x %d\n", nrow(matriz_respostas), ncol(matriz_respostas)))

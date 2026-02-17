@@ -1,11 +1,63 @@
-# API TRI v2 - Sistema de Correção para Mentorias
-# Melhorias: Calibração com âncoras, CAT robusto, Scoring com regressão
+# =============================================================================
+# API TRI v2 - SISTEMA DE CORREÇÃO PARA MENTORIAS
+# =============================================================================
+#
+# DESCRIÇÃO:
+#   API REST avançada para análise psicométrica usando Teoria de Resposta ao
+#   Item (TRI). Suporta calibração, CAT (Computerized Adaptive Testing) e 
+#   scoring com ensemble TRI + Regressão Linear.
+#
+# ENDPOINTS PRINCIPAIS:
+#
+# 1. CALIBRAÇÃO
+#    POST /tct/analisar         - Análise TCT preliminar
+#    POST /calibrar             - Calibração TRI (Rasch/2PL/3PL)
+#    POST /calibrar/ancoras     - Calibração com âncoras fixas (equalização)
+#
+# 2. SCORING
+#    POST /estimar_theta        - Estimação de theta (EAP/MAP/ML)
+#    POST /scoring/estimar      - Scoring com ensemble TRI + Regressão
+#
+# 3. CAT (COMPUTERIZED ADAPTIVE TESTING)
+#    POST /cat/sessao/iniciar   - Iniciar sessão CAT
+#    POST /cat/sessao/responder - Registrar resposta
+#    POST /cat/sessao/estado    - Ver estado da sessão
+#    POST /cat/simular          - Simulação completa do CAT
+#
+# MODELOS SUPORTADOS:
+#   - Rasch: 1 parâmetro (dificuldade)
+#   - 2PL: 2 parâmetros (discriminação + dificuldade)
+#   - 3PL: 3 parâmetros (+ acaso/careless)
+#
+# DEPENDÊNCIAS:
+#   - plumber: Framework API REST
+#   - mirt: Modelos TRI
+#   - jsonlite: Serialização JSON
+#   - dplyr: Manipulação de dados
+#   - memoise: Cache de funções
+#
+# COMO EXECUTAR:
+#   library(plumber)
+#   pr("R/api/plumber_v2.R") %>% pr_run(port=8000)
+#
+# DOCUMENTAÇÃO INTERATIVA:
+#   Acesse http://localhost:8000/__docs__/ quando o servidor estiver rodando
+#
+# FUTURAS MELHORIAS:
+#   - [ ] Autenticação JWT
+#   - [ ] Rate limiting
+#   - [ ] Persistência em banco de dados (PostgreSQL)
+#   - [ ] Clustering para múltiplos workers
+#
+# HISTÓRICO:
+#   2026-02-17: v2.0 - Sistema completo com CAT e ensemble scoring
+# =============================================================================
 
-library(plumber)
-library(mirt)
-library(jsonlite)
-library(dplyr)
-library(memoise)
+library(plumber)    # Framework API REST
+library(mirt)       # Modelos TRI
+library(jsonlite)   # JSON
+library(dplyr)      # Manipulação de dados
+library(memoise)    # Cache
 
 #* @apiTitle API TRI v2 - Sistema de Mentorias
 #* @apiDescription API avançada para calibração, CAT e scoring com regressão linear
@@ -210,31 +262,73 @@ function(req, res, modelo = "3PL") {
 }
 
 # ============================================================================
-# 2. MÓDULO CAT v2 - ROBUSTO
+# ============================================================================
+# 2. MÓDULO CAT v2 - COMPUTERIZED ADAPTIVE TESTING
+# ============================================================================
+#
+# DESCRIÇÃO:
+#   Implementação de CAT (Teste Adaptativo Computadorizado) que seleciona
+#   itens de forma adaptativa com base na habilidade estimada do candidato.
+#
+# CRITÉRIOS DE SELEÇÃO SUPORTADOS:
+#   - MFI (Maximum Fisher Information): Mais eficiente, item que maximiza
+#     a informação no theta atual
+#   - MLWI (Maximum Likelihood Weighted Information): Alternativa ao MFI
+#   - MPWI (Maximum Posterior Weighted Information): Com priori
+#   - MEI (Maximum Expected Information): Esperança da informação
+#
+# REGRAS DE PARADA:
+#   1. Número máximo de itens atingido (ex: 30)
+#   2. Precisão alcançada (SE < 0.3)
+#   3. Número mínimo de itens + precisão
+#   4. Número máximo de itens consecutivos sem mudança significativa
+#
+# ARQUITETURA:
+#   - Sessões armazenadas em memória (lista R)
+#   - Em produção: substituir por Redis/PostgreSQL
+#   - Stateless: cada requisição independe da anterior
+#
+# FLUXO DE USO:
+#   1. POST /cat/sessao/iniciar     → Cria sessão, retorna sessao_id
+#   2. GET  /cat/sessao/{id}/proximo_item → Retorna item a responder
+#   3. POST /cat/sessao/{id}/responder → Envia resposta, atualiza theta
+#   4. Repete 2-3 até critério de parada
+#   5. GET  /cat/sessao/{id}/resultado → Relatório final
+#
+# FUTURAS MELHORIAS:
+#   - [ ] Content balancing (balanceamento por áreas)
+#   - [ ] Controle de exposição de itens (pool rotation)
+#   - [ ] Detecção de comportamento atípico (raso, trapaça)
+#   - [ ] Warm-up items (itens iniciais fixos)
 # ============================================================================
 
-# Store de sessões em memória (em produção usar Redis/Banco)
+# Store de sessões em memória
+# NOTA: Em produção, substituir por Redis ou banco de dados
 sessoes <- list()
 
-# Criar nova sessão CAT
 #* @post /cat/sessao/iniciar
-#* @param aluno_id:string ID do aluno
-#* @param configuracao:object Configurações do CAT
+#* @param aluno_id:string ID do aluno (opcional)
+#* @param configuracao:object Configurações do CAT (opcional)
 #* @serializer json
 function(req, res) {
   tryCatch({
     body <- fromJSON(req$postBody)
+    
+    # ID do aluno (gerar automático se não fornecido)
     aluno_id <- body$aluno_id %||% paste0("anon_", format(Sys.time(), "%s"))
+    
+    # Configurações padrão do CAT
     config <- body$configuracao %||% list(
-      modelo = "3PL",
-      criterio_selecao = "MFI",
-      max_itens = 30,
-      min_itens = 10,
-      se_alvo = 0.3,
-      content_areas = NULL,
-      exposicao_max = 0.5
+      modelo = "3PL",           # Modelo TRI (Rasch/2PL/3PL)
+      criterio_selecao = "MFI", # Critério de seleção de itens
+      max_itens = 30,           # Máximo de itens a aplicar
+      min_itens = 10,           # Mínimo de itens antes de parar
+      se_alvo = 0.3,            # Erro padrão alvo (precisão)
+      content_areas = NULL,     # Para content balancing (futuro)
+      exposicao_max = 0.5       # Máxima proporção de exposição do item
     )
     
+    # Gerar ID único da sessão (timestamp + random)
     sessao_id <- paste0("sess_", format(Sys.time(), "%s"), "_", sample(1000:9999, 1))
     
     sessao <- list(

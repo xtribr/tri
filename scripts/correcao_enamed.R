@@ -1,11 +1,43 @@
 #!/usr/bin/env Rscript
-# Correção Estilo ENAMED - Simulado Aplicação Real
-# Modelo: Rasch 1PL + Estatísticas de Ajuste
+# =============================================================================
+# CORREÇÃO ESTILO ENAMED - SIMULADO APLICAÇÃO REAL
+# =============================================================================
+# 
+# DESCRIÇÃO:
+#   Script principal para correção de simulados usando Teoria de Resposta ao 
+#   Item (TRI) com modelo Rasch 1PL (1 parâmetro de dificuldade).
+#
+# ENTRADA:
+#   - aplicacao.csv: Dados brutos de respostas (591 candidatos × 100 itens)
+#
+# SAÍDA:
+#   - output/correcao_enamed/resultado_candidatos.csv: Notas e thetas
+#   - output/correcao_enamed/parametros_itens_tri.csv: Parâmetros calibrados
+#   - output/correcao_enamed/estatisticas_tct.csv: Análise TCT
+#   - output/correcao_enamed/modelo_rasch.rds: Modelo calibrado (para reuso)
+#
+# MODELO:
+#   Rasch 1PL: P(θ) = 1 / (1 + exp(-(θ - b)))
+#   Onde: θ = habilidade do candidato, b = dificuldade do item
+#
+# DEPENDÊNCIAS:
+#   - mirt: Calibração TRI
+#   - dplyr: Manipulação de dados
+#   - ggplot2: Visualização (se disponível)
+#
+# NOTAS PARA MANUTENÇÃO:
+#   1. Se trocar de modelo (ex: 2PL), alterar itemtype="Rasch" para "2PL"
+#   2. Para amostras >1000, adicionar: technical=list(NCYCLES=2000)
+#   3. Se houver itens novos, calibrar separadamente e fazer linking
+#
+# HISTÓRICO:
+#   2026-02-17: Versão inicial com Rasch 1PL
+# =============================================================================
 
 suppressPackageStartupMessages({
-  library(mirt)
-  library(dplyr)
-  library(ggplot2)
+  library(mirt)    # Pacote TRI - https://github.com/philchalmers/mirt
+  library(dplyr)   # Manipulação de dados
+  library(ggplot2) # Visualização (opcional)
 })
 
 cat("=" ,rep("=", 70), "\n", sep="")
@@ -106,19 +138,41 @@ cat(sprintf("    - Itens Difíceis: %d\n", sum(tct_stats$categoria_dificuldade =
 cat(sprintf("    - Itens com problema: %d\n\n", sum(tct_stats$status != "OK")))
 
 # ============================================================================
-# 3. CALIBRAÇÃO RASCH 1PL (ESTILO ENAMED)
+# 3. CALIBRAÇÃO TRI - MODELO RASCH 1PL
+# ============================================================================
+# 
+# POR QUE RASCH 1PL?
+#   - ENAMED usa modelo 1PL (apenas dificuldade)
+#   - Mais simples e estável que 2PL/3PL
+#   - Foco na ordenação dos candidatos, não em adivinhação
+#
+# PARÂMETROS DA FUNÇÃO mirt():
+#   - model=1: Unidimensional (1 fator)
+#   - itemtype="Rasch": a=1 fixo, apenas b estimado
+#   - TOL=1e-6: Tolerância de convergência
+#   - quadpts=40: Pontos de quadratura Gauss-Hermite
+#
+# PARA MUDAR O MODELO:
+#   - Rasch: itemtype="Rasch" (a=1 fixo)
+#   - 1PL: itemtype="1PL" (a estimado, igual para todos)
+#   - 2PL: itemtype="2PL" (a e b livres por item)
+#   - 3PL: itemtype="3PL" (a, b, c livres)
+#
+# FUTURAS MELHORIAS:
+#   - Para amostras grandes (>5000): technical=list(NCYCLES=2000, parallel=TRUE)
+#   - Se houver problemas de convergência: aumentar TOL ou usar method="EM"
 # ============================================================================
 
 cat("[3/6] Calibração TRI - Modelo Rasch 1PL...\n")
 
-# Modelo Rasch 1PL (apenas parâmetro b)
+# Calibração do modelo Rasch
 mod_rasch <- mirt(
   respostas,
-  model = 1,
-  itemtype = "Rasch",
-  verbose = FALSE,
-  TOL = 1e-6,
-  quadpts = 40
+  model = 1,           # Unidimensional
+  itemtype = "Rasch",  # 1 parâmetro (apenas b)
+  verbose = FALSE,     # Silencioso
+  TOL = 1e-6,          # Tolerância de convergência
+  quadpts = 40         # Pontos de quadratura
 )
 
 cat(sprintf("    ✓ Modelo calibrado\n"))
@@ -126,7 +180,9 @@ cat(sprintf("    ✓ Log-likelihood: %.2f\n", mod_rasch@Fit$logLik))
 cat(sprintf("    ✓ AIC: %.2f\n", mod_rasch@Fit$AIC))
 cat(sprintf("    ✓ BIC: %.2f\n\n", mod_rasch@Fit$BIC))
 
-# Extrair parâmetros
+# Extrair parâmetros calibrados
+# IRTpars=TRUE: formato IRT (a, b, c)
+# simplify=TRUE: retorna matriz em vez de lista
 params_tri <- coef(mod_rasch, IRTpars = TRUE, simplify = TRUE)$items
 
 # Data frame de parâmetros
@@ -138,10 +194,26 @@ parametros_itens <- data.frame(
   stringsAsFactors = FALSE
 )
 
-# Estatísticas de ajuste (simplificado para Rasch)
+# ============================================================================
+# ESTATÍSTICAS DE AJUSTE DOS ITENS
+# ============================================================================
+# 
+# itemfit() calcula estatísticas de ajuste para cada item:
+#   - S-X2: Teste qui-quadrado de ajuste
+#   - p-valor: Significância estatística (p>0.05 = ajuste aceitável)
+#   - INFIT/OUTFIT: Estatísticas de ajuste do modelo Rasch
+#
+# LIMITES DE DECISÃO:
+#   - INFIT/OUTFIT entre 0.7-1.3: Item mantido ✓
+#   - INFIT/OUTFIT entre 0.5-0.7 ou 1.3-1.5: Revisar ⚠
+#   - INFIT/OUTFIT <0.5 ou >1.5: Excluir ✗
+#
+# NOTA: Nem todos os modelos retornam INFIT/OUTFIT. Se não disponível,
+# usamos apenas o S-X2 (p-valor).
+# ============================================================================
+
 cat("    Calculando estatísticas de ajuste...\n")
 
-# Para Rasch, usar estatísticas básicas de itemfit
 tryCatch({
   item_fit <- itemfit(mod_rasch)
   
@@ -152,17 +224,17 @@ tryCatch({
     parametros_itens$p_valor_ajuste <- NA
   }
   
-  # INFIT/OUTFIT se disponíveis
+  # INFIT/OUTFIT se disponíveis (específico do Rasch)
   if ("infit" %in% names(item_fit)) {
     parametros_itens$infit <- round(item_fit$infit, 4)
     parametros_itens$outfit <- round(item_fit$outfit, 4)
   } else {
-    # Calcular estatísticas alternativas
     parametros_itens$infit <- NA
     parametros_itens$outfit <- NA
   }
   
 }, error = function(e) {
+  # Se falhar, preencher com NA (não interromper execução)
   parametros_itens$p_valor_ajuste <<- NA
   parametros_itens$infit <<- NA
   parametros_itens$outfit <<- NA
@@ -188,15 +260,48 @@ cat(sprintf("    - Itens para EXCLUIR: %d\n\n", sum(parametros_itens$ajuste_stat
 # ============================================================================
 # 4. ESTIMAÇÃO DE ESCORES (THETA) - MÉTODO EAP
 # ============================================================================
+#
+# MÉTODO EAP (Expected A Posteriori):
+#   - Usado oficialmente pelo ENEM/ENAMED
+#   - Incorpora priori normal no cálculo
+#   - Mais estável que ML (Maximum Likelihood) para escores extremos
+#
+# MÉTODOS ALTERNATIVOS (fscores):
+#   - "ML": Maximum Likelihood (sem priori, pode divergir)
+#   - "MAP": Maximum A Posteriori (moda da posteriori)
+#   - "EAP": Expected A Posteriori (média da posteriori) ← USADO
+#   - "WLE": Weighted Likelihood Estimation (correção de viés)
+#
+# PARÂMETROS:
+#   - full.scores=TRUE: Retorna escores para todos os respondentes
+#   - full.scores.SE=TRUE: Retorna erros padrão (precisão)
+#
+# INTERPRETAÇÃO DO THETA:
+#   - Média teórica: 0 (população de referência)
+#   - DP teórico: 1
+#   - Range típico: -3 a +3 (99.7% da população)
+#   - Theta > 0: Acima da média
+#   - Theta < 0: Abaixo da média
+#
+# PRECISÃO:
+#   - SE (Standard Error): Erro padrão da estimativa
+#   - Quanto menor o SE, mais precisa a estimativa
+#   - SE típico: 0.2-0.4 para provas de 50-100 itens
+# ============================================================================
 
 cat("[4/6] Estimando proficiências (theta) via EAP...\n")
 
-# EAP (Expected A Posteriori) - método oficial ENEM/ENAMED
-theta_eap <- fscores(mod_rasch, method = "EAP", full.scores = TRUE, full.scores.SE = TRUE)
+# Estimação EAP (método oficial ENEM/ENAMED)
+theta_eap <- fscores(
+  mod_rasch, 
+  method = "EAP",           # Método EAP (recomendado)
+  full.scores = TRUE,       # Retornar todos os escores
+  full.scores.SE = TRUE     # Retornar erros padrão
+)
 
-# Verificar estrutura do retorno
+# Verificar estrutura do retorno (pode variar por versão do mirt)
 theta_eap <- as.data.frame(theta_eap)
-theta_values <- theta_eap[, 1]
+theta_values <- theta_eap[, 1]  # Primeira coluna = theta
 se_values <- if (ncol(theta_eap) >= 2) theta_eap[, 2] else rep(NA, length(theta_values))
 
 cat(sprintf("    ✓ Proficiências estimadas\n"))
