@@ -373,24 +373,113 @@ interface ScoreDistributionProps {
 // - Comparação com distribuição normal
 ```
 
-### 3. ConversionTable - Tabela ENEM
+### 3. ENEMConversionTable - Tabela de Conversão ENEM 2024
+
+**Referência:** `docs/ENEM-2024-dificuldades.pdf`
+
+Esta tabela é essencial para o ENEM, mostrando a conversão de acertos para nota na escala 0-1000 com intervalos de confiança.
+
 ```tsx
-interface ConversionTableProps {
+interface ENEMConversionTableProps {
+  // Estrutura baseada no PDF oficial ENEM 2024
+  data: Array<{
+    acertos: number;           // Número de acertos (0-45 ou 0-90)
+    percentual: number;        // % de acertos
+    notaPadrao: number;        // Nota na escala 0-1000
+    notaMin: number;           // Limite inferior (95% CI)
+    notaMed: number;           // Nota média estimada
+    notaMax: number;           // Limite superior (95% CI)
+    amplitude: number;         // Max - Min (precisão da estimativa)
+  }>;
+  area: 'LC' | 'CH' | 'CN' | 'MT' | 'RED';  // Área do ENEM
+  ano: number;  // 2024, 2023, etc.
+}
+
+// Features específicas ENEM:
+// - Visualização tipo "thermometer" para cada faixa
+// - Cores por área (LC=azul, CH=vermelho, CN=verde, MT=amarelo)
+// - Filtro por faixa de acertos
+// - Comparador ano vs ano (evolução da prova)
+// - Exportação no formato oficial INEP
+```
+
+#### Estrutura Visual da Tabela (baseada no PDF)
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│ ENEM 2024 - TABELA DE CONVERSÃO DE NOTAS                                │
+│ Área: Ciências Humanas (CH)                                             │
+├─────────┬──────────┬────────────┬────────────┬────────────┬─────────────┤
+│ Acertos │    %     │ Nota Mín   │ Nota Média │ Nota Máx   │ Amplitude   │
+├─────────┼──────────┼────────────┼────────────┼────────────┼─────────────┤
+│    0    │   0.0%   │    295.2   │   301.8    │   308.4    │    13.2     │
+│    1    │   2.2%   │    312.5   │   318.4    │   324.3    │    11.8     │
+│   ...   │   ...    │    ...     │    ...     │    ...     │    ...      │
+│   22    │  48.9%   │    498.7   │   502.3    │   506.1    │     7.4     │
+│   23    │  51.1%   │    504.2   │   508.5    │   512.8    │     8.6     │
+│   ...   │   ...    │    ...     │    ...     │    ...     │    ...      │
+│   45    │ 100.0%   │    815.6   │   821.3    │   827.0    │    11.4     │
+└─────────┴──────────┴────────────┴────────────┴────────────┴─────────────┘
+
+Legenda:
+• Nota Mín/Máx: Intervalo de confiança de 95% (2×EP)
+• Nota Média: Estimativa EAP (Expected A Posteriori)
+• Amplitude: Indicador da precisão da estimativa
+```
+
+#### Visualizações Adicionais
+
+**1. Gráfico de Conversão (Scatter + Error Bars):**
+```tsx
+<ENEMConversionChart
+  data={conversionData}
+  showConfidenceInterval={true}
+  highlightRange={[20, 25]}  // Destacar faixa de acertos
+/>
+```
+
+**2. Comparador de Anos:**
+```tsx
+<YearComparisonChart
+  years={[2022, 2023, 2024]}
+  metric="notaMed"
+  acertos={23}  // Comparar nota para 23 acertos ao longo dos anos
+/>
+```
+
+**3. Mapa de Calor por Área:**
+```tsx
+<AreaHeatmap
+  areas={['LC', 'CH', 'CN', 'MT']}
+  highlightDifficulty={true}  // Mostrar qual área é mais difícil
+/>
+```
+
+#### Importância para o Frontend
+
+A tabela ENEM-2024-dificuldades.pdf define:
+1. **Estrutura de dados:** 5 colunas (acertos, %, min, média, max)
+2. **Visualização:** Necessidade de mostrar intervalos de confiança
+3. **Cálculos:** Amplitude = NotaMax - NotaMin (indicador de precisão)
+4. **Contexto:** Cada área (LC, CH, CN, MT) tem sua própria tabela
+5. **Validação:** Comparação com tabelas oficiais INEP
+
+### 4. GenericConversionTable - Outros Exames
+
+Para ENAMED, SAEB e outros:
+
+```tsx
+interface GenericConversionTableProps {
   data: Array<{
     acertos: number;
     percentual: number;
     nota: number;
-    notaMin: number;
-    notaMax: number;
+    // Sem intervalo (apenas nota única) ou com desvio padrão
+    desvioPadrao?: number;
   }>;
-  examType: 'ENEM' | 'ENAMED' | 'SAEB';
+  examType: 'ENAMED' | 'SAEB' | 'CUSTOM';
+  scale: '0-100' | '0-10' | '0-1000';
 }
-
-// Features:
-// - Ordenação por colunas
-// - Filtro por faixa de notas
-// - Destaque para mediana
-// - Exportação CSV
 ```
 
 ---
@@ -459,6 +548,97 @@ export const useAnalysis = () => {
 9. Backend R → Resultados prontos
 10. Frontend → GET /api/resultados/{analysisId}
 11. Frontend → Renderização dos gráficos
+```
+
+---
+
+## 📊 Cálculo da Tabela ENEM (Backend R)
+
+**Baseado em:** `docs/ENEM-2024-dificuldades.pdf`
+
+O ENEM usa uma metodologia específica para gerar a tabela de conversão com intervalos de confiança:
+
+### Passos para Geração da Tabela
+
+```r
+# 1. Calibrar modelo 3PL com prior Beta(4,16) para c
+mod_3pl <- mirt(dados, 1, itemtype="3PL",
+                parprior=list(c=cbind(4, 16)))
+
+# 2. Extrair parâmetros
+pars <- coef(mod_3pl, IRTpars=TRUE, simplify=TRUE)$items
+
+# 3. Gerar escores para cada número de acertos possível
+gerar_tabela_enem <- function(mod, n_itens) {
+  tabela <- data.frame()
+  
+  for(n_acertos in 0:n_itens) {
+    # Estimar theta via EAP para n acertos
+    # (simulação ou cálculo direto)
+    theta_est <- estimar_theta_acertos(n_acertos, pars)
+    
+    # Calcular nota via regressão logística
+    nota_media <- 300 + 200 * plogis(theta_est)
+    
+    # Calcular erro padrão
+    se <- calcular_erro_padrao(theta_est, pars)
+    
+    # Intervalo de confiança 95%
+    nota_min <- nota_media - 1.96 * se
+    nota_max <- nota_media + 1.96 * se
+    
+    tabela <- rbind(tabela, data.frame(
+      acertos = n_acertos,
+      percentual = round(n_acertos/n_itens * 100, 1),
+      notaMin = round(nota_min, 1),
+      notaMed = round(nota_media, 1),
+      notaMax = round(nota_max, 1),
+      amplitude = round(nota_max - nota_min, 1)
+    ))
+  }
+  
+  return(tabela)
+}
+```
+
+### Estrutura de Retorno da API
+
+```typescript
+// GET /api/tabela-conversao/{analysisId}
+{
+  "exame": "ENEM",
+  "ano": 2024,
+  "area": "CH",
+  "nItens": 45,
+  "tabela": [
+    {
+      "acertos": 0,
+      "percentual": 0.0,
+      "notaMin": 295.2,
+      "notaMed": 301.8,
+      "notaMax": 308.4,
+      "amplitude": 13.2
+    },
+    // ... todas as linhas até nItens
+  ],
+  "metadata": {
+    "modelo": "3PL",
+    "metodo": "EAP",
+    "intervaloConfianca": 0.95
+  }
+}
+```
+
+### Visualização no Frontend
+
+```tsx
+// Componente específico ENEM
+<ENEMTabelaConversao 
+  data={tabelaData}
+  showHeatmap={true}        // Mapa de calor por faixa
+  highlightAcertos={23}     // Destacar 23 acertos
+  compareWithPrevious={2023} // Comparar com ano anterior
+/>
 ```
 
 ---
