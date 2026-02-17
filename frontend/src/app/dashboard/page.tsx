@@ -1,13 +1,15 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useAppStore } from '@/lib/stores/appStore';
 import { ICCCurve } from '@/components/charts/ICCCurve';
 import { ScoreDistribution } from '@/components/charts/ScoreDistribution';
+import { CandidateTable } from '@/components/dashboard/CandidateTable';
+import { ENEMReferenceTable } from '@/components/dashboard/ENEMReferenceTable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Users, 
   FileQuestion, 
@@ -16,11 +18,14 @@ import {
   AlertCircle,
   Play,
   Download,
-  RefreshCw
+  RefreshCw,
+  GraduationCap,
+  Table2
 } from 'lucide-react';
 import Link from 'next/link';
 import { calibrarItens, estimarEscores } from '@/lib/api/client';
 import type { CalibrationResult, ScoringResult, CalibratedItem } from '@/types';
+import type { ENEMArea } from '@/lib/utils/enemConversion';
 
 // Dados mock para demonstração
 const MOCK_ITEMS: CalibratedItem[] = [
@@ -41,6 +46,9 @@ export default function DashboardPage() {
   const [calibracao, setCalibracao] = useState<CalibrationResult | null>(null);
   const [escores, setEscores] = useState<ScoringResult[] | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const [enemArea, setEnemArea] = useState<ENEMArea>('CH');
+  const [enemAno, setEnemAno] = useState<number>(2023);
+  const [activeTab, setActiveTab] = useState('overview');
 
   const handleCalibrar = async () => {
     if (!upload) return;
@@ -53,7 +61,7 @@ export default function DashboardPage() {
       const result = await calibrarItens(upload.dados, modelo);
       setCalibracao(result);
       
-      // Estimar escores
+      // Estimar escores individuais
       const scores = await estimarEscores(upload.dados, result.itens, 'EAP');
       setEscores(scores);
     } catch (error) {
@@ -201,125 +209,239 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Gráficos */}
-      {calibracao && (
-        <div className="grid grid-cols-2 gap-6">
-          {/* ICC Curves */}
-          <Card className="glass-card col-span-2">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>Curvas Características dos Itens (ICC)</span>
-                <Badge variant="secondary">
-                  {calibracao.itens.length} itens calibrados
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ICCCurve items={calibracao.itens} height={400} />
-            </CardContent>
-          </Card>
+      {/* Tabs de conteúdo */}
+      {calibracao && escores && (
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-flex">
+            <TabsTrigger value="overview">
+              <BarChart3 className="w-4 h-4 mr-2" />
+              Visão Geral
+            </TabsTrigger>
+            <TabsTrigger value="candidates">
+              <Table2 className="w-4 h-4 mr-2" />
+              Candidatos ({escores.length})
+            </TabsTrigger>
+            <TabsTrigger value="enem">
+              <GraduationCap className="w-4 h-4 mr-2" />
+              ENEM
+            </TabsTrigger>
+            <TabsTrigger value="items">
+              <FileQuestion className="w-4 h-4 mr-2" />
+              Itens
+            </TabsTrigger>
+          </TabsList>
 
-          {/* Score Distribution */}
-          {escores && (
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle>Distribuição de Habilidade (θ)</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ScoreDistribution scores={escores} height={300} />
-              </CardContent>
-            </Card>
-          )}
+          {/* Tab: Visão Geral */}
+          <TabsContent value="overview" className="space-y-6">
+            <div className="grid grid-cols-2 gap-6">
+              {/* ICC Curves */}
+              <Card className="glass-card col-span-2">
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>Curvas Características dos Itens (ICC)</span>
+                    <Badge variant="secondary">
+                      {calibracao.itens.length} itens calibrados
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ICCCurve items={calibracao.itens} height={400} />
+                </CardContent>
+              </Card>
 
-          {/* Item Statistics */}
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle>Estatísticas dos Itens</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {calibracao.itens.slice(0, 6).map((item) => (
-                  <div 
-                    key={item.cod}
-                    className="flex items-center justify-between p-3 rounded-lg bg-[var(--bg-secondary)]"
-                  >
-                    <div>
-                      <span className="font-mono text-sm font-medium">{item.cod}</span>
-                      {item.status && (
-                        <Badge 
-                          variant={item.status === 'OK' ? 'default' : 'secondary'}
-                          className="ml-2 text-xs"
-                        >
-                          {item.status}
-                        </Badge>
-                      )}
+              {/* Score Distribution */}
+              <Card className="glass-card">
+                <CardHeader>
+                  <CardTitle>Distribuição de Habilidade (θ)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ScoreDistribution scores={escores} height={300} />
+                </CardContent>
+              </Card>
+
+              {/* Estatísticas de Ajuste */}
+              <Card className="glass-card">
+                <CardHeader>
+                  <CardTitle>Estatísticas de Ajuste do Modelo</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 rounded-lg bg-[var(--bg-secondary)] text-center">
+                      <p className="text-2xl font-bold text-[var(--primary)]">
+                        {calibracao.estatisticas_ajuste.loglikelihood.toFixed(0)}
+                      </p>
+                      <p className="text-xs text-[var(--text-secondary)] mt-1">Log-Likelihood</p>
                     </div>
-                    <div className="text-right text-sm">
-                      <div className="text-[var(--text-secondary)]">
-                        b = {item.b.toFixed(2)}
-                      </div>
-                      {item.a && (
-                        <div className="text-[var(--text-tertiary)] text-xs">
-                          a = {item.a.toFixed(2)}
-                        </div>
-                      )}
+                    <div className="p-4 rounded-lg bg-[var(--bg-secondary)] text-center">
+                      <p className="text-2xl font-bold text-[var(--primary)]">
+                        {calibracao.estatisticas_ajuste.aic.toFixed(0)}
+                      </p>
+                      <p className="text-xs text-[var(--text-secondary)] mt-1">AIC</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-[var(--bg-secondary)] text-center">
+                      <p className="text-2xl font-bold text-[var(--primary)]">
+                        {calibracao.estatisticas_ajuste.bic.toFixed(0)}
+                      </p>
+                      <p className="text-xs text-[var(--text-secondary)] mt-1">BIC</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-[var(--bg-secondary)] text-center">
+                      <p className="text-2xl font-bold text-[calibracao.convergencia ? 'var(--success)' : 'var(--error)']">
+                        {calibracao.iteracoes}
+                      </p>
+                      <p className="text-xs text-[var(--text-secondary)] mt-1">
+                        Iterações
+                      </p>
                     </div>
                   </div>
-                ))}
-              </div>
-              
-              {calibracao.itens.length > 6 && (
-                <p className="text-center text-sm text-[var(--text-secondary)] mt-4">
-                  +{calibracao.itens.length - 6} itens
-                </p>
-              )}
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
 
-          {/* Fit Statistics */}
-          <Card className="glass-card col-span-2">
-            <CardHeader>
-              <CardTitle>Estatísticas de Ajuste</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-4 gap-4">
-                <div className="p-4 rounded-lg bg-[var(--bg-secondary)] text-center">
-                  <p className="text-2xl font-bold text-[var(--primary)]">
-                    {calibracao.estatisticas_ajuste.loglikelihood.toFixed(0)}
-                  </p>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">Log-Likelihood</p>
+          {/* Tab: Candidatos */}
+          <TabsContent value="candidates">
+            <Card className="glass-card">
+              <CardHeader>
+                <CardTitle>Escores TRI por Candidato</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CandidateTable
+                  candidatos={upload.candidatos}
+                  respostas={upload.dados}
+                  escores={escores}
+                  itens={calibracao.itens}
+                  area={enemArea}
+                  anoENEM={enemAno}
+                  mostrarENEM={preset?.tipo === 'ENEM'}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Tab: ENEM */}
+          <TabsContent value="enem">
+            <div className="grid grid-cols-2 gap-6">
+              <ENEMReferenceTable
+                area={enemArea}
+                ano={enemAno}
+                onAreaChange={setEnemArea}
+                onAnoChange={setEnemAno}
+              />
+              <Card className="glass-card">
+                <CardHeader>
+                  <CardTitle>Conversão de Theta para ENEM</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <p className="text-sm text-[var(--text-secondary)]">
+                      A conversão é feita em dois passos:
+                    </p>
+                    <ol className="text-sm text-[var(--text-secondary)] space-y-2 list-decimal list-inside">
+                      <li>
+                        <strong>Theta → Acertos Esperados:</strong> Soma das probabilidades 
+                        de acerto dadas pelo modelo TRI
+                      </li>
+                      <li>
+                        <strong>Acertos → Nota ENEM:</strong> Interpolação linear na tabela 
+                        de referência do INEP
+                      </li>
+                    </ol>
+                    <div className="p-4 rounded-lg bg-[var(--bg-secondary)] text-sm">
+                      <p className="font-medium text-[var(--text-primary)] mb-2">
+                        Fórmula da Probabilidade (3PL):
+                      </p>
+                      <p className="font-mono text-[var(--text-secondary)]">
+                        P(θ) = c + (1-c) / (1 + e^(-a(θ-b)))
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Tab: Itens */}
+          <TabsContent value="items">
+            <Card className="glass-card">
+              <CardHeader>
+                <CardTitle>Parâmetros dos Itens Calibrados</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                  {calibracao.itens.map((item) => (
+                    <div 
+                      key={item.cod}
+                      className="p-4 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-light)]"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="font-mono font-bold text-[var(--text-primary)]">
+                          {item.cod}
+                        </span>
+                        {item.status && (
+                          <Badge 
+                            variant={item.status === 'OK' ? 'default' : 'secondary'}
+                            className="text-xs"
+                          >
+                            {item.status}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-[var(--text-tertiary)]">Dificuldade (b)</span>
+                          <span className="font-mono font-medium">{item.b.toFixed(3)}</span>
+                        </div>
+                        {item.a && (
+                          <div className="flex justify-between">
+                            <span className="text-[var(--text-tertiary)]">Discriminação (a)</span>
+                            <span className="font-mono">{item.a.toFixed(3)}</span>
+                          </div>
+                        )}
+                        {item.c && (
+                          <div className="flex justify-between">
+                            <span className="text-[var(--text-tertiary)]">Acerto ao acaso (c)</span>
+                            <span className="font-mono">{item.c.toFixed(3)}</span>
+                          </div>
+                        )}
+                        {item.infit && (
+                          <div className="flex justify-between">
+                            <span className="text-[var(--text-tertiary)]">INFIT</span>
+                            <span className={`font-mono ${
+                              item.infit >= 0.7 && item.infit <= 1.3 
+                                ? 'text-[var(--success)]' 
+                                : 'text-[var(--warning)]'
+                            }`}>
+                              {item.infit.toFixed(2)}
+                            </span>
+                          </div>
+                        )}
+                        {item.outfit && (
+                          <div className="flex justify-between">
+                            <span className="text-[var(--text-tertiary)]">OUTFIT</span>
+                            <span className={`font-mono ${
+                              item.outfit >= 0.7 && item.outfit <= 1.3 
+                                ? 'text-[var(--success)]' 
+                                : 'text-[var(--warning)]'
+                            }`}>
+                              {item.outfit.toFixed(2)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="p-4 rounded-lg bg-[var(--bg-secondary)] text-center">
-                  <p className="text-2xl font-bold text-[var(--primary)]">
-                    {calibracao.estatisticas_ajuste.aic.toFixed(0)}
-                  </p>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">AIC</p>
-                </div>
-                <div className="p-4 rounded-lg bg-[var(--bg-secondary)] text-center">
-                  <p className="text-2xl font-bold text-[var(--primary)]">
-                    {calibracao.estatisticas_ajuste.bic.toFixed(0)}
-                  </p>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">BIC</p>
-                </div>
-                <div className="p-4 rounded-lg bg-[var(--bg-secondary)] text-center">
-                  <p className="text-2xl font-bold text-[calibracao.convergencia ? 'var(--success)' : 'var(--error)']">
-                    {calibracao.iteracoes}
-                  </p>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">
-                    Iterações ({calibracao.convergencia ? 'Convergiu' : 'Não convergiu'})
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       )}
 
       {!calibracao && !isLoading && (
         <div className="text-center py-16">
           <BarChart3 className="w-16 h-16 text-[var(--border-medium)] mx-auto mb-4" />
           <h3 className="text-lg font-medium text-[var(--text-secondary)]">
-            Clique em "Iniciar Análise" para calibrar os itens
+            Clique em "Iniciar Análise" para calibrar os itens e estimar escores
           </h3>
         </div>
       )}

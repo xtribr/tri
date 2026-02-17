@@ -13,7 +13,11 @@ import type {
   CalibratedItem,
 } from '@/types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// Em dev, usa o proxy do Next.js para evitar CORS
+const isBrowser = typeof window !== 'undefined';
+const API_BASE_URL = isBrowser && process.env.NODE_ENV === 'development' 
+  ? '/api'  // Usa proxy do Next.js
+  : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000');
 
 // Cliente Axios configurado
 const apiClient: AxiosInstance = axios.create({
