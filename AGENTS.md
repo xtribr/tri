@@ -322,6 +322,56 @@ git push origin main
 - ❌ Arquivos temporários (.tmp, .log)
 - ❌ Modelos .rds grandes (exceto os essenciais)
 
-### Histórico de commits
+## Frontend (Next.js)
+
+**Novo!** Interface web moderna para análise TRI.
+
+### Tecnologias
+- **Next.js 16** + React 19 + TypeScript
+- **Tailwind CSS v4** + shadcn/ui
+- **Recharts** para visualizações
+- **Zustand** para state management
+
+### Estrutura
+```
+frontend/
+├── src/app/           # Páginas (upload, analysis, dashboard)
+├── src/components/    # Layout, charts, upload
+├── src/lib/          # API client, stores
+└── src/types/        # TypeScript definitions
+```
+
+### Funcionalidades
+1. **Upload CSV**: Validação de dados binários (0/1)
+2. **Configuração**: Presets ENAMED, ENEM, SAEB
+3. **Dashboard**:
+   - Curvas ICC interativas
+   - Distribuição de habilidade (θ)
+   - Estatísticas de ajuste
+   - Tabela de parâmetros
+
+### Executar
+```bash
+cd frontend
+npm run dev         # Dev server em localhost:3000
+npm run build       # Build de produção
+```
+
+### ⚠️ Aviso Importante
+**Este é um MVP** - Requer revisão por especialistas em psicometria para garantir:
+- Corretude matemática das fórmulas
+- Validação estatística
+- Conformidade INEP
+
+### Conexão API
+O frontend conecta à API R Plumber (`localhost:8000`):
+- `POST /calibrar` - Calibração
+- `POST /scoring/estimar` - Escores
+- `POST /cat/sessao/*` - CAT
+
+---
+
+## Histórico de Commits
 
 - **Initial commit** (2026-02-17): Projeto completo com análise de 591 candidatos, simulação 40k e comparação ENAMED
+- **Frontend MVP** (2026-02-17): Interface Next.js com upload, configuração e dashboard
