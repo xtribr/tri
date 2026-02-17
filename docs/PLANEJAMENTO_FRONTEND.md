@@ -844,6 +844,335 @@ const loadPresetStrategy = {
 
 ---
 
+## 📈 Análise de Tendências e Previsão
+
+**Dados disponíveis:** 2009, 2015-2023 (histórico) + 2024 (atual)
+
+**Aguardando:** 2025 (quando sair, upload simples)
+
+### Botão Principal: "🔮 Análise de Tendências"
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  📈 Análise de Tendências ENEM                 [🔙 Voltar]  │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  🎯 PROJEÇÃO 2025 (Baseada em Tendências Históricas)       │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │ Selecionar Área: [CN ▼]                                ││
+│  │                                                         ││
+│  │ 📊 Dados Históricos: 2009, 2015-2024 (11 anos)        ││
+│  │ 📁 Dados 2024: ✓ Carregado                            ││
+│  │ 📁 Dados 2025: ⏳ Aguardando publicação INEP          ││
+│  │                                                         ││
+│  │ [🔮 Gerar Projeção 2025]  [📊 Analisar Tendências]     ││
+│  └─────────────────────────────────────────────────────────┘│
+│                                                             │
+│  📉 RESULTADOS DA ANÁLISE                                   │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │ Tendência Últimos 5 Anos (2020-2024):                  ││
+│  │ • Dificuldade Geral: 🟡 ESTÁVEL (-2.3 pts média)       ││
+│  │ • Nota Média: 587.4 → 594.2 (+6.8 pts)                 ││
+│  │ • Variação por Faixa: Maior em 25-35 acertos           ││
+│  │                                                         ││
+│  │ 🎯 PROJEÇÃO PARA 2025:                                  ││
+│  │ • Nota Média Estimada: 598.5 (±15 pts)                 ││
+│  │ • Intervalo de Confiança: 583.5 - 613.5                ││
+│  │ • Probabilidade de Manter Padrão: 78%                  ││
+│  │                                                         ││
+│  │ [📥 Baixar Projeção 2025]  [📊 Ver Gráfico Completo]   ││
+│  └─────────────────────────────────────────────────────────┘│
+│                                                             │
+│  📊 GRÁFICOS INTERATIVOS                                    │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  [Evolução da Nota Média] [Dispersão por Ano]          ││
+│  │  [Comparação por Faixa]   [Previsão 2025]              ││
+│  └─────────────────────────────────────────────────────────┘│
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Funcionalidades da Análise
+
+#### 1. **Comparador de Anos** (Botão "📊 Analisar Tendências")
+
+```tsx
+<YearComparisonAnalyzer
+  baseYear={2024}
+  compareYears={[2020, 2021, 2022, 2023]}
+  area="CN"
+  metrics={['notaMed', 'notaMin', 'notaMax']}
+  acertosRange={[20, 30]}  // Foco na faixa de 20-30 acertos
+/>
+```
+
+**Saída:**
+```
+Comparação: 2024 vs Média 2020-2023
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Acertos 20:  498.2 → 502.1  (+3.9)  🟢
+Acertos 25:  542.8 → 545.3  (+2.5)  🟢
+Acertos 30:  601.2 → 598.4  (-2.8)  🔴
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Conclusão: Prova 2024 ligeiramente mais fácil na base,
+           mais difícil no topo (discriminação maior)
+```
+
+#### 2. **Detector de Tendências**
+
+```typescript
+interface TrendAnalysis {
+  period: string;           // "2020-2024"
+  slope: number;           // Inclinação da regressão
+  r2: number;              // Coeficiente de determinação
+  prediction2025: {
+    estimated: number;     // Nota média projetada
+    confidenceInterval: [number, number];
+    probability: number;   // Probabilidade da previsão
+  };
+  alerts: string[];        // Alertas de mudanças significativas
+}
+
+// Algoritmo de detecção
+const analyzeTrends = (historicalData: YearData[]): TrendAnalysis => {
+  // 1. Regressão linear por faixa de acertos
+  // 2. Cálculo de drift (mudança média anual)
+  // 3. Previsão com intervalo de confiança
+  // 4. Detecção de outliers (anos atípicos)
+};
+```
+
+#### 3. **Visualizações de Tendência**
+
+**Gráfico 1: Evolução Temporal**
+```
+Nota Média (25 acertos)
+800 ┤                                    ╭──── 2024
+    │                              ╭────╯
+750 ┤                        ╭────╯
+    │                  ╭────╯
+700 ┤            ╭────╯
+    │      ╭────╯
+650 ┤──────╯
+    └────┬────┬────┬────┬────┬────┬────┬
+        2017 2018 2019 2020 2021 2022 2023 2024
+
+Linha tracejada: Projeção 2025
+Área sombreada: Intervalo de confiança (95%)
+```
+
+**Gráfico 2: Heatmap de Mudanças**
+```
+Mudança vs Ano Anterior (em pontos)
+        CH      CN      LC      MT
+2020    +2.1    -1.3    +5.2    +8.1
+2021    -0.5    +1.2    -2.1    -3.4
+2022    +1.8    +2.5    +0.8    +1.2
+2023    -1.2    -0.8    +1.5    -2.1
+2024    +0.3    +1.1    -0.5    +0.8
+
+🟢 Verde: +5 pts (mais fácil)
+🟡 Amarelo: ±2 pts (estável)
+🔴 Vermelho: -5 pts (mais difícil)
+```
+
+#### 4. **Projeção 2025**
+
+**Quando clicar em "🔮 Gerar Projeção 2025":**
+
+```typescript
+const generate2025Projection = async (area: string) => {
+  // 1. Carregar dados históricos
+  const historical = await loadHistoricalData(2009, 2024, area);
+  
+  // 2. Aplicar modelo de séries temporais
+  const model = fitTimeSeriesModel(historical, {
+    method: 'linear',      // ou 'exponential', 'arima'
+    seasonality: false,    // ENEM não tem sazonalidade
+    confidence: 0.95
+  });
+  
+  // 3. Gerar projeção
+  const projection = model.predict(2025);
+  
+  // 4. Calcular intervalos de confiança
+  const ci = calculateConfidenceInterval(projection, historical.variance);
+  
+  return {
+    projectedTable: generateFullTable(projection),
+    confidenceInterval: ci,
+    reliability: calculateReliability(historical),
+    recommendation: generateRecommendation(projection, historical)
+  };
+};
+```
+
+**Resultado da Projeção:**
+```json
+{
+  "ano": 2025,
+  "tipo": "PROJEÇÃO",
+  "baseado_em": "2009-2024",
+  "area": "CH",
+  "tabela_projetada": [
+    {"acertos": 0, "notaMin": 302.1, "notaMed": 308.5, "notaMax": 314.9},
+    // ... todas as linhas
+  ],
+  "intervalo_confianca": {
+    "nivel": 0.95,
+    "nota_media_min": 568.2,
+    "nota_media_max": 614.8
+  },
+  "confiabilidade": 0.78,
+  "recomendacao": "Usar com cautela. Validar quando dados oficiais 2025 saírem."
+}
+```
+
+#### 5. **Upload de Dados 2025 (Quando Sair)**
+
+**Botão de Ação:** "⬆️ Upload Tabela 2025" (aparece quando próximo da data de publicação)
+
+```
+STATUS ATUAL:
+┌─────────────────────────────────────────┐
+│  📅 Dados ENEM 2025                     │
+│                                         │
+│  Status: ⏳ Aguardando INEP             │
+│  Previsão: Novembro/Dezembro 2025       │
+│                                         │
+│  Histórico de Publicação:               │
+│  • 2024: Publicado em 17/01/2025        │
+│  • 2023: Publicado em 15/01/2024        │
+│  • 2022: Publicado em 20/01/2023        │
+│                                         │
+│  🔔 [Ativar Notificação]               │
+│     Avise-me quando sair                │
+└─────────────────────────────────────────┘
+
+QUANDO SAIR - FLUXO DE UPLOAD:
+┌─────────────────────────────────────────┐
+│  ⬆️ Nova Tabela ENEM 2025 Detectada!   │
+│                                         │
+│  Arraste ou selecione:                  │
+│  📁 ENEM-2025-dificuldades.pdf          │
+│                                         │
+│  ⚡ Processamento Automático:           │
+│  ┌─────────────────────────────────────┐│
+│  │ ✅ Parse do PDF                    ││
+│  │ ⏳ Validar estrutura               ││
+│  │ ⏳ Comparar com projeção 2025      ││
+│  │ ⏳ Calcular acurácia da previsão   ││
+│  │ ⏳ Atualizar banco de dados        ││
+│  └─────────────────────────────────────┘│
+│                                         │
+│  [🚀 Iniciar Upload e Análise]          │
+└─────────────────────────────────────────┘
+
+RESULTADO DO UPLOAD:
+┌─────────────────────────────────────────┐
+│  ✅ ENEM 2025 Incorporado com Sucesso!  │
+│                                         │
+│  📊 Análise de Acurácia da Projeção:    │
+│  • Acurácia Geral: 89.3%                │
+│  • Desvio Médio: 4.2 pontos             │
+│  • Faixa Mais Acertada: 25-30 acertos   │
+│  • Faixa Menos Acertada: 0-5 acertos    │
+│                                         │
+│  📈 Comparativo Projeção vs Real:       │
+│  ┌──────────┬──────────┬──────────┐    │
+│  │ Acertos  │ Projeção │   Real   │    │
+│  ├──────────┼──────────┼──────────┤    │
+│  │    20    │   498.5  │   502.1  │ 🟢 │
+│  │    25    │   542.8  │   540.3  │ 🟢 │
+│  │    30    │   601.2  │   595.8  │ 🟡 │
+│  └──────────┴──────────┴──────────┘    │
+│                                         │
+│  🎯 Ações Recomendadas:                 │
+│  • [📊 Ver Análise Completa]            │
+│  • [📥 Baixar Relatório PDF]            │
+│  • [🔮 Atualizar Projeção 2026]         │
+└─────────────────────────────────────────┘
+```
+
+**Processo Técnico:**
+
+```typescript
+// Quando usuário fizer upload de 2025
+const process2025Upload = async (file: File) => {
+  // 1. Parse do PDF
+  const extractedData = await parsePDF(file);
+  
+  // 2. Validar estrutura
+  const validation = validateTableStructure(extractedData, 'ENEM');
+  if (!validation.valid) {
+    showError(validation.errors);
+    return;
+  }
+  
+  // 3. Carregar projeção 2025 (se existir)
+  const projection2025 = await loadProjection(2025);
+  
+  // 4. Calcular acurácia
+  const accuracy = calculateProjectionAccuracy(
+    projection2025.tabela,
+    extractedData.tabela
+  );
+  
+  // 5. Salvar no banco
+  await saveReferenceTable({
+    exam: 'ENEM',
+    year: 2025,
+    data: extractedData,
+    metadata: {
+      uploadDate: new Date(),
+      sourceFile: file.name,
+      projectionAccuracy: accuracy,
+      validated: true
+    }
+  });
+  
+  // 6. Gerar relatório
+  return generateUploadReport(extractedData, projection2025, accuracy);
+};
+```
+
+### Alertas Automáticos
+
+```typescript
+// Detectar anos atípicos
+const alerts = [
+  {
+    type: 'WARNING',
+    message: '2020 apresenta variação atípica (pandemia)',
+    recommendation: 'Considerar excluir 2020 da análise de tendência'
+  },
+  {
+    type: 'INFO', 
+    message: 'Tendência de estabilidade nos últimos 3 anos',
+    confidence: 0.85
+  },
+  {
+    type: 'ALERT',
+    message: 'Projeção 2025 tem baixa confiabilidade (dados insuficientes)',
+    action: 'Aguardar dados oficiais ou usar 2024 como base'
+  }
+];
+```
+
+### Botão Flutuante (Quick Action)
+
+```tsx
+// Botão sempre visível no canto inferior direito
+<FloatingActionButton
+  icon="🔮"
+  label="Análise de Tendências"
+  onClick={() => router.push('/analise-tendencias')}
+  pulse={hasNewData2024}  // Pulsar quando 2024 foi carregado
+/>
+```
+
+---
+
 ## 🗂️ Versionamento de Tabelas de Referência
 
 **Problema:** Tabelas ENEM mudam a cada ano (ENEM-2024-dificuldades.pdf, ENEM-2025, etc.)
