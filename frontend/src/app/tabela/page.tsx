@@ -33,9 +33,9 @@ const AREAS_CONFIG: Record<ENEMArea, { nome: string; cor: string; n_itens: numbe
 const DADOS_HISTORICOS = enemData as Record<string, any>;
 
 export default function TabelaPage() {
-  const [ano, setAno] = useState('2024');
+  const [ano, setAno] = useState('2023');
   const [area, setArea] = useState<ENEMArea>('MT');
-  const [anosComparacao, setAnosComparacao] = useState<string[]>(['2023', '2024']);
+  const [anosComparacao, setAnosComparacao] = useState<string[]>(['2022', '2023']);
 
   const areaConfig = AREAS_CONFIG[area];
   
@@ -121,9 +121,16 @@ export default function TabelaPage() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {['2009', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'].map(a => (
-                  <SelectItem key={a} value={a}>{a}</SelectItem>
-                ))}
+                <SelectItem value="2009">2009</SelectItem>
+                <SelectItem value="2015">2015</SelectItem>
+                <SelectItem value="2016">2016</SelectItem>
+                <SelectItem value="2017">2017</SelectItem>
+                <SelectItem value="2018">2018</SelectItem>
+                <SelectItem value="2019">2019</SelectItem>
+                <SelectItem value="2020">2020</SelectItem>
+                <SelectItem value="2021">2021</SelectItem>
+                <SelectItem value="2022">2022</SelectItem>
+                <SelectItem value="2023">2023</SelectItem>
               </SelectContent>
             </Select>
             
@@ -283,7 +290,7 @@ export default function TabelaPage() {
             </CardHeader>
             <CardContent>
               <div className="mb-4 flex flex-wrap gap-2">
-                {['2020', '2021', '2022', '2023', '2024'].map(anoOpt => (
+                {['2009', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023'].map(anoOpt => (
                   <Badge
                     key={anoOpt}
                     variant={anosComparacao.includes(anoOpt) ? 'default' : 'outline'}
