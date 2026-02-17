@@ -5,6 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -287,18 +290,26 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span>Tabela de Conversão - {AREAS_INFO[areaDestaque].nome}</span>
-                <Select value={areaDestaque} onValueChange={(v) => setAreaDestaque(v as ENEMArea)}>
-                  <SelectTrigger className="w-24">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {areas.map(a => <SelectItem key={a} value={a}>{a}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center gap-3">
+                  <Link 
+                    href="/tabela" 
+                    className="text-sm text-[var(--primary)] hover:underline flex items-center gap-1"
+                  >
+                    Ver tabela completa <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <Select value={areaDestaque} onValueChange={(v) => setAreaDestaque(v as ENEMArea)}>
+                    <SelectTrigger className="w-24">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {areas.map(a => <SelectItem key={a} value={a}>{a}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
+              <ScrollArea className="h-[400px]">
                 <table className="w-full">
                   <thead className="bg-[var(--bg-secondary)] sticky top-0">
                     <tr>
@@ -311,10 +322,10 @@ export default function DashboardPage() {
                   </thead>
                   <tbody>
                     {dados[areaDestaque]?.tabela_amplitude.map((row, idx) => {
-                      if (idx % 5 !== 0) return null; // Mostrar a cada 5 acertos
                       const amplitude = (row.notaMax || 0) - (row.notaMin || 0);
+                      const isDestaque = row.acertos % 5 === 0;
                       return (
-                        <tr key={row.acertos} className="border-b border-[var(--border-light)] hover:bg-[var(--bg-secondary)]">
+                        <tr key={row.acertos} className={`border-b border-[var(--border-light)] hover:bg-[var(--bg-secondary)] ${isDestaque ? 'bg-[var(--bg-secondary)]/50' : ''}`}>
                           <td className="p-3 font-mono">{row.acertos}</td>
                           <td className="p-3 text-right font-mono text-[var(--text-secondary)]">
                             {row.notaMin?.toFixed(1) || '-'}
@@ -335,7 +346,7 @@ export default function DashboardPage() {
                     })}
                   </tbody>
                 </table>
-              </div>
+              </ScrollArea>
             </CardContent>
           </Card>
         </TabsContent>
