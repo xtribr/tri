@@ -295,3 +295,33 @@ mirt(dados, 1, itemtype="Rasch",
 4. **Interpretação do beta:** O coeficiente beta (-0.276751) difere de -1 porque o range do Angoff (julgamento humano) está comprimido comparado à escala TRI.
 
 5. **Equalização:** Para equalização entre diferentes aplicações do simulado ou com o ENAMED oficial, usar a função `multipleGroup()` do pacote mirt com as configurações recomendadas pelo INEP (ver `R/SKILL.md`).
+
+## Backup e Versionamento
+
+**Repositório GitHub:** https://github.com/xtribr/tri.git
+
+### Como fazer backup
+
+```bash
+# Backup manual
+git add -A
+git commit -m "Descrição das alterações"
+git push origin main
+
+# Ou usar o script automatizado
+./scripts/backup_github.sh
+```
+
+### Arquivos versionados
+
+- ✅ Código-fonte (scripts R, APIs)
+- ✅ Documentação (AGENTS.md, SKILL.md)
+- ✅ Resultados processados (CSV, Excel)
+- ✅ Gráficos e visualizações
+- ⚠️ Microdados ENAMED (grandes arquivos de texto)
+- ❌ Arquivos temporários (.tmp, .log)
+- ❌ Modelos .rds grandes (exceto os essenciais)
+
+### Histórico de commits
+
+- **Initial commit** (2026-02-17): Projeto completo com análise de 591 candidatos, simulação 40k e comparação ENAMED
