@@ -368,10 +368,15 @@ export default function TabelaPage() {
                         ? ((row.med - dadosGrafico[idx-1].med) / dadosGrafico[idx-1].med) * 100
                         : 0;
                       
+                      // Destacar a cada 5 acertos para facilitar leitura
+                      const isDestaque = row.acertos % 5 === 0;
+                      
                       return (
                         <tr 
                           key={row.acertos} 
-                          className="border-b border-[var(--border-light)] hover:bg-[var(--bg-tertiary)] transition-colors"
+                          className={`border-b border-[var(--border-light)] hover:bg-[var(--bg-tertiary)] transition-colors ${
+                            isDestaque ? 'bg-[var(--bg-secondary)]/50' : ''
+                          }`}
                         >
                           <td className="p-3 font-mono font-bold text-lg">{row.acertos}</td>
                           <td className="p-3 text-right font-mono text-[var(--text-secondary)]">
