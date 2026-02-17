@@ -1,86 +1,101 @@
-# TRI - Análise Psicométrica ENAMED/ENARE 2026
+# TRI - Sistema de Análise Psicométrica para Exames Educacionais
 
-[![R](https://img.shields.io/badge/R-4.5-blue.svg)](https://www.r-project.org/)
-[![mirt](https://img.shields.io/badge/mirt-1.45-green.svg)](https://github.com/philchalmers/mirt)
+[![R](https://img.shields.io/badge/R-4.5+-blue.svg)](https://www.r-project.org/)
+[![mirt](https://img.shields.io/badge/mirt-1.45+-green.svg)](https://github.com/philchalmers/mirt)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
-Sistema completo de análise psicométrica utilizando Teoria de Resposta ao Item (TRI) aplicada ao ENAMED (Exame Nacional de Avaliação Médica) e ENARE 2026.
+Sistema completo de análise psicométrica utilizando **Teoria de Resposta ao Item (TRI)** para exames educacionais de larga escala. Suporta calibração, estimação de proficiências, equalização e testes adaptativos (CAT).
 
 ## 📋 Visão Geral
 
-Este projeto realiza calibração de itens, estimação de proficiências e análise comparativa entre simulados e o ENAMED oficial, utilizando o modelo Rasch 1PL combinado com o Método Angoff Modificado.
+Este projeto implementa metodologias avançadas de TRI para avaliações educacionais, incluindo modelos Rasch 1PL, 2PL e 3PL, com aplicações específicas para:
 
-### Resultados Principais
+- **ENEM** - Exame Nacional do Ensino Médio
+- **SAEB** - Sistema de Avaliação da Educação Básica  
+- **ENAMED** - Exame Nacional de Avaliação Médica
+- **ENARE** - Exame Nacional de Residência Médica
 
-| Métrica | Simulado Real (591) | Simulação 40k | ENAMED Oficial |
-|---------|---------------------|---------------|----------------|
-| **Média Acertos** | 58.2 | 58.1 | 59.3 |
-| **Mediana** | 59 | 59 | 59 |
-| **DP Acertos** | 13.9 | 14.7 | 10.0 |
-| **r_biserial Médio** | 0.268 | **0.314** | - |
-| **Itens Problemáticos** | 17 (17%) | **0 (0%)** | - |
+### Características Principais
 
-> ✅ A prova está **APTA** para aplicação em larga escala (40k+ candidatos)
+| Recurso | Descrição |
+|---------|-----------|
+| **Calibração TRI** | Modelos 1PL, 2PL, 3PL com ajuste automático |
+| **Equalização** | Linking entre formas via `multipleGroup()` |
+| **CAT** | Testes Adaptativos Computadorizados |
+| **Análise TCT** | Teoria Clássica dos Testes como pré-análise |
+| **Validação** | Estatísticas de ajuste (INFIT, OUTFIT, S-X2) |
+| **API REST** | Interface para integração com sistemas |
 
 ## 🚀 Funcionalidades
 
-### 1. Calibração TRI
-- Modelo Rasch 1PL (1 parâmetro de dificuldade)
-- Estimação via Máxima Verossimilhança (EM)
-- Scoring EAP (Expected A Posteriori)
+### 1. Calibração de Itens
 
-### 2. Simulação em Escala
-- Simulação de 40.000 candidatos baseada em parâmetros reais
-- Validação estatística da qualidade dos itens em amostras grandes
-- Análise de sensibilidade e estabilidade
+```r
+# Rasch 1PL (ENAMED/SAEB)
+mod_rasch <- mirt(dados, model=1, itemtype="Rasch")
 
-### 3. Comparação com ENAMED
-- Análise comparativa com microdados oficiais (49.7k candidatos)
-- Teste Kolmogorov-Smirnov para similaridade de distribuições
-- Relatórios Excel completos
+# 2PL (Discriminação variável)
+mod_2pl <- mirt(dados, model=1, itemtype="2PL")
 
-### 4. API REST (Plumber)
-- Endpoints para calibração e estimação
-- Simulação CAT (Computerized Adaptive Testing)
-- Scoring com ensemble TRI + Regressão
+# 3PL ENEM (com parâmetro de acaso)
+mod_3pl <- mirt(dados, model=1, itemtype="3PL", 
+                parprior=list(c=cbind(4, 16)))  # Prior Beta(4,16)
+```
+
+### 2. Estimação de Escores
+
+Métodos suportados:
+- **EAP** - Expected A Posteriori (recomendado, usado pelo ENEM)
+- **MAP** - Maximum A Posteriori
+- **ML** - Maximum Likelihood
+- **WLE** - Weighted Likelihood Estimation
+
+### 3. Equalização entre Formas
+
+```r
+# Linking entre versões A e B da prova
+mg_model <- multipleGroup(dados, model=1, group=versao,
+                          invariance=c('slopes', 'intercepts'))
+```
+
+### 4. CAT (Computerized Adaptive Testing)
+
+API REST para testes adaptativos:
+- Seleção por Máxima Informação de Fisher (MFI)
+- Critérios de parada configuráveis
+- Content balancing (em desenvolvimento)
 
 ## 📁 Estrutura do Projeto
 
 ```
 TRI/
-├── 📊 output/                    # Resultados e relatórios
-│   ├── correcao_enamed/          # Resultados do simulado real
-│   ├── simulacao_40k/            # Simulação em larga escala
-│   ├── comparacao_enamed/        # Análise comparativa
-│   └── *.xlsx                    # Relatórios Excel
+├── 📊 output/                    # Resultados de análises
+├── 🔧 scripts/                   # Scripts executáveis
+│   ├── correcao_enamed.R         # Correção estilo ENAMED
+│   ├── simular_candidatos.R      # Simulação em escala
+│   ├── comparar_provas.R         # Análise comparativa
+│   └── gerar_relatorios.R        # Relatórios Excel
 │
-├── 🔧 scripts/                   # Scripts R executáveis
-│   ├── correcao_enamed.R         # Correção do simulado
-│   ├── simular_40k_candidatos.R  # Simulação 40k
-│   ├── comparar_enamed_oficial.R # Comparação ENAMED
-│   └── gerar_excel_*.R           # Geração de relatórios
-│
-├── 📚 docs/                      # Documentação e dados
-│   ├── ENAMED/                   # Microdados oficiais
-│   ├── *.pdf                     # Artigos científicos
-│   └── *.md                      # Insights e resumos
+├── 📚 docs/                      # Documentação
+│   ├── ENAMED/                   # Especificações ENAMED
+│   ├── BIBLIOTECA_ENEM.md        # Referências científicas
+│   └── *.pdf                     # Artigos e manuais
 │
 ├── 🔬 R/                         # Código R modular
 │   ├── api/                      # APIs Plumber
 │   ├── SKILL.md                  # Guia mirt
-│   └── SKILL_TRI_CONTEXTOS.md    # Contextos de aplicação
+│   └── SKILL_TRI_CONTEXTOS.md    # Contextos por exame
 │
-├── 📋 AGENTS.md                  # Documentação do agente
-├── 📄 README.md                  # Este arquivo
-└── ⚙️ .gitignore                 # Configuração git
+├── 📋 AGENTS.md                  # Documentação completa
+└── 📄 README.md                  # Este arquivo
 ```
 
 ## 🛠️ Tecnologias
 
 - **R 4.5+** - Linguagem principal
-- **mirt** - Pacote TRI (Item Response Theory)
+- **mirt** - Modelos TRI (Item Response Theory)
 - **plumber** - API REST
-- **openxlsx** - Geração de Excel
+- **openxlsx** - Geração de relatórios Excel
 - **dplyr/ggplot2** - Manipulação e visualização
 
 ## 📦 Instalação
@@ -93,112 +108,123 @@ install.packages(c("mirt", "plumber", "openxlsx", "dplyr", "ggplot2",
 
 ## 🚀 Como Usar
 
-### 1. Correção do Simulado
+### Correção de Simulado
 
 ```r
-# Executar correção completa
 source("scripts/correcao_enamed.R")
 ```
 
-**Entrada:** `aplicacao.csv` (591 candidatos × 100 itens)
-
-**Saída:** 
-- `output/correcao_enamed/resultado_candidatos.csv`
-- `output/correcao_enamed/parametros_itens_tri.csv`
-- `output/RELATORIO_ENAMED_COMPLETO.xlsx`
-
-### 2. Simulação 40k
-
-```r
-# Simular 40.000 candidatos
-source("scripts/simular_40k_candidatos.R")
-```
+**Entrada:** Arquivo CSV com respostas (0=erro, 1=acerto)
 
 **Saída:**
-- `output/simulacao_40k/resultados_40k_candidatos.csv`
-- `output/simulacao_40k/graficos/*.png`
+- `output/correcao_enamed/resultado_candidatos.csv` - Notas e thetas
+- `output/correcao_enamed/parametros_itens_tri.csv` - Parâmetros calibrados
+- `output/RELATORIO_ENAMED_COMPLETO.xlsx` - Relatório Excel
 
-### 3. Comparação com ENAMED
+### Simulação em Escala
 
 ```r
-# Comparar com ENAMED oficial
-source("scripts/comparar_enamed_oficial.R")
-source("scripts/gerar_excel_comparativo.R")
+source("scripts/simular_candidatos.R")
 ```
 
-**Saída:** `output/COMPARACAO_ENAMED_COMPLETO.xlsx`
+Simula candidatos segundo modelo Rasch para validação da prova.
 
-### 4. Backup para GitHub
+### Comparação entre Provas
 
-```bash
-./scripts/backup_github.sh
+```r
+source("scripts/comparar_provas.R")
 ```
 
-## 📊 Principais Descobertas
+Compara estatísticas entre provas ou contra referências oficiais.
 
-### 1. Qualidade dos Itens Melhora com Amostra Maior
+### API REST
 
-| Amostra | r_biserial Médio | Itens Problemáticos |
-|---------|------------------|---------------------|
-| 591 (real) | 0.268 | 17 (17%) |
-| 40.000 (sim) | **0.314** | **0 (0%)** |
+```r
+library(plumber)
+pr("R/api/plumber_v2.R") %>% pr_run(port=8000)
+```
 
-**Conclusão:** Todos os 100 itens discriminam bem em amostras grandes.
+Acesse a documentação interativa em: `http://localhost:8000/__docs__/`
 
-### 2. Distribuição Similar ao ENAMED
+## 📊 Modelos TRI Suportados
 
-- **Mediana idêntica:** 59 acertos (todos os cenários)
-- **Média próxima:** 58.1-59.3 acertos
-- **Teste KS:** Distribuição estatisticamente similar
+| Modelo | Parâmetros | Uso Típico |
+|--------|-----------|------------|
+| **Rasch** | b (dificuldade) | ENAMED, SAEB |
+| **1PL** | a (fixo), b | Alternativa ao Rasch |
+| **2PL** | a, b | Provas com discriminação variável |
+| **3PL** | a, b, c | ENEM (com acaso) |
+| **GRM** | múltiplos thresholds | Itens politômicos |
 
-### 3. Nível de Confiança: 86.2% (ALTA)
+## 📈 Estatísticas de Ajuste
 
-- Recuperação de theta: 0.95 correlação
-- Estabilidade dos parâmetros: 0.9999
-- Precisão da medição: ~78%
+O sistema calcula automaticamente:
 
-## 📈 Gráficos Gerados
+- **Correlação Bisserial** - Discriminação do item
+- **INFIT/OUTFIT** - Ajuste ao modelo Rasch
+- **S-X²** - Teste qui-quadrado de ajuste
+- **Informação de Fisher** - Precisão da medição
 
-![Distribuição de Acertos](output/simulacao_40k/graficos/distribuicao_acertos.png)
-
-![Comparação r_biserial](output/simulacao_40k/graficos/distribuicao_r_biserial.png)
-
-## 🎯 Próximos Passos
-
-### Prioridade ALTA
-- [ ] Implementar `multipleGroup()` para equalização entre formas
-- [ ] Validar com dados reais 40k+ candidatos
-
-### Prioridade MÉDIA
-- [ ] Gráficos avançados com `itemplot()` (ICC, curvas de informação)
-- [ ] Teste de ajuste global com `M2()`
-- [ ] Otimizar configurações `technical` para grandes amostras
-
-### Futuro
-- [ ] Implementar CAT (Computerized Adaptive Testing) em produção
-- [ ] Análise de DIF (Differential Item Functioning) por sexo/região
-
-## 📚 Documentação
+## 📚 Documentação Técnica
 
 - **[AGENTS.md](AGENTS.md)** - Documentação completa do projeto
 - **[R/SKILL.md](R/SKILL.md)** - Guia de uso do pacote mirt
 - **[R/SKILL_TRI_CONTEXTOS.md](R/SKILL_TRI_CONTEXTOS.md)** - Contextos ENAMED/ENEM/SAEB
 
-## 🏆 Resultados em Destaque
+### Fontes Oficiais
 
-### Excel Relatórios
+- **INEP** - Especificações para Equalização no MIRT (Portaria 441/2023)
+- **Notas Técnicas ENAMED** - Metodologia oficial de correção
+- **Artigos Científicos** - Biblioteca em `docs/BIBLIOTECA_ENEM.md`
 
-| Arquivo | Conteúdo |
-|---------|----------|
-| `RELATORIO_ENAMED_COMPLETO.xlsx` | Notas dos 591 candidatos + TCT |
-| `COMPARACAO_ENAMED_COMPLETO.xlsx` | Análise comparativa detalhada |
-| `COMPARACAO_SIMULACAO_40K.xlsx` | Validação simulação 40k |
+## 🔬 Metodologia
 
-### Publicações Base
+### Fluxo de Análise
 
-- **Nota Técnica 19/2025/CGAFM/DAES-INEP** - Fonte das âncoras Angoff
-- **Especificações INEP** - Equalização no MIRT (Portaria 441/2023)
-- **14 artigos científicos ENEM** - Catalogados em `docs/BIBLIOTECA_ENEM.md`
+1. **Pré-análise TCT** - Estatísticas descritivas, taxa de acerto, correlações
+2. **Calibração TRI** - Estimação de parâmetros (a, b, c)
+3. **Validação** - Estatísticas de ajuste, análise de resíduos
+4. **Estimação** - Cálculo de thetas (EAP/MAP/ML)
+5. **Transformação** - Conversão para escala percentual ou 0-1000
+
+### Pressupostos do Modelo
+
+- Unidimensionalidade (itens medem um construto único)
+- Independência local (itens não correlacionados)
+- Monotonicidade (probabilidade cresce com habilidade)
+
+## 🎯 Aplicações
+
+Este sistema é adequado para:
+
+- **Instituições educacionais** - Correção de simulados e avaliações
+- **Bancas examinadoras** - Análise de itens e calibração
+- **Pesquisadores** - Estudos psicométricos em educação
+- **Preparatórios** - Sistemas de correção personalizados
+
+## 📝 Configurações por Contexto
+
+### ENAMED (Rasch 1PL + Angoff)
+
+```r
+mirt(dados, 1, itemtype="Rasch")
+theta <- fscores(mod, method="EAP")
+nota <- 50 + 10 * theta  # Transformação linear
+```
+
+### ENEM (3PL com priors)
+
+```r
+mirt(dados, 1, itemtype="3PL",
+     parprior=list(c=cbind(4, 16)))  # E[c] = 0.20
+```
+
+### SAEB (Equalização múltiplos grupos)
+
+```r
+multipleGroup(dados, 1, group=ano, 
+              invariance=c('slopes', 'intercepts'))
+```
 
 ## 🤝 Contribuição
 
@@ -218,4 +244,4 @@ Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICE
 
 ---
 
-**Nota:** Este projeto é um estudo acadêmico/psicométrico e não tem vínculo oficial com o INEP ou ENAMED.
+**Nota:** Este é um sistema de código aberto para análise psicométrica. Para uso em produção, recomenda-se validação com especialistas em psicometria.
