@@ -1,457 +1,345 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useAppStore } from '@/lib/stores/appStore';
-import { ICCCurve } from '@/components/charts/ICCCurve';
-import { ScoreDistribution } from '@/components/charts/ScoreDistribution';
-import { CandidateTable } from '@/components/dashboard/CandidateTable';
-import { ENEMReferenceTable } from '@/components/dashboard/ENEMReferenceTable';
-import { Button } from '@/components/ui/button';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  Cell,
+} from 'recharts';
 import { 
   Users, 
-  FileQuestion, 
-  BarChart3, 
-  Target,
-  AlertCircle,
-  Play,
-  Download,
-  RefreshCw,
-  GraduationCap,
-  Table2
+  BookOpen, 
+  TrendingUp, 
+  TrendingDown,
+  School,
+  MapPin,
+  Calendar,
+  AlertCircle
 } from 'lucide-react';
-import Link from 'next/link';
-import { calibrarItens, estimarEscores } from '@/lib/api/client';
-import type { CalibrationResult, ScoringResult, CalibratedItem } from '@/types';
+import { carregarDadosENEM, type ENEMCompleteData, type ENEMYearData } from '@/lib/api/enemData';
 import type { ENEMArea } from '@/lib/utils/enemConversion';
 
-// Dados mock para demonstração
-const MOCK_ITEMS: CalibratedItem[] = [
-  { cod: 'Q001', b: -1.5, a: 1.2, status: 'OK' },
-  { cod: 'Q002', b: -0.8, a: 1.0, status: 'OK' },
-  { cod: 'Q003', b: -0.2, a: 1.3, status: 'OK' },
-  { cod: 'Q004', b: 0.5, a: 0.9, status: 'ATENCAO' },
-  { cod: 'Q005', b: 1.2, a: 1.1, status: 'OK' },
-  { cod: 'Q006', b: 1.8, a: 1.0, status: 'OK' },
-];
+const AREAS_INFO: Record<ENEMArea, { nome: string; cor: string; icone: React.ElementType }> = {
+  CH: { nome: 'Ciências Humanas', cor: '#0071E3', icone: BookOpen },
+  CN: { nome: 'Ciências da Natureza', cor: '#34C759', icone: BookOpen },
+  LC: { nome: 'Linguagens e Códigos', cor: '#FF9500', icone: BookOpen },
+  MT: { nome: 'Matemática', cor: '#AF52DE', icone: BookOpen },
+};
 
 export default function DashboardPage() {
-  const upload = useAppStore((state) => state.upload);
-  const preset = useAppStore((state) => state.preset);
-  const modelo = useAppStore((state) => state.modelo);
-  
-  const [isLoading, setIsLoading] = useState(false);
-  const [calibracao, setCalibracao] = useState<CalibrationResult | null>(null);
-  const [escores, setEscores] = useState<ScoringResult[] | null>(null);
-  const [erro, setErro] = useState<string | null>(null);
-  const [enemArea, setEnemArea] = useState<ENEMArea>('CH');
-  const [enemAno, setEnemAno] = useState<number>(2023);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [anoSelecionado, setAnoSelecionado] = useState<number>(2024);
+  const [dados, setDados] = useState<ENEMCompleteData | null>(null);
+  const [carregando, setCarregando] = useState(true);
+  const [areaDestaque, setAreaDestaque] = useState<ENEMArea>('MT');
 
-  const handleCalibrar = async () => {
-    if (!upload) return;
-    
-    setIsLoading(true);
-    setErro(null);
-    
-    try {
-      console.log('[Dashboard] Iniciando calibração...', { modelo, n_candidatos: upload.n_candidatos, n_itens: upload.n_itens });
-      
-      // Chamar API real
-      const result = await calibrarItens(upload.dados, modelo);
-      console.log('[Dashboard]Calibração concluída:', result);
-      setCalibracao(result);
-      
-      // Estimar escores individuais
-      console.log('[Dashboard] Estimando escores...');
-      const scores = await estimarEscores(upload.dados, result.itens, 'EAP');
-      console.log('[Dashboard] Escores estimados:', scores.length);
-      setEscores(scores);
-    } catch (error) {
-      console.error('[Dashboard] Erro na calibração:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido na calibração';
-      setErro(errorMessage);
-      console.log('[Dashboard] Usando dados mock como fallback');
-      
-      // Fallback para mock em caso de erro
-      setCalibracao({
-        itens: MOCK_ITEMS,
-        estatisticas_ajuste: {
-          loglikelihood: -2500,
-          aic: 5100,
-          bic: 5300,
-        },
-        convergencia: true,
-        iteracoes: 25,
-      });
-      
-      // Gerar escores mock
-      const mockScores: ScoringResult[] = upload.dados.map((row, i) => {
-        const acertos = row.reduce((a, b) => a + b, 0);
-        const theta = (acertos / row.length) * 6 - 3 + (Math.random() - 0.5);
-        return {
-          theta,
-          erro_padrao: 0.3 + Math.random() * 0.2,
-          ic_95: [theta - 0.6, theta + 0.6],
-          metodo: 'EAP',
-          respostas_consideradas: row.length,
-        };
-      });
-      setEscores(mockScores);
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    async function carregar() {
+      setCarregando(true);
+      const dadosENEM = await carregarDadosENEM(anoSelecionado);
+      setDados(dadosENEM);
+      setCarregando(false);
     }
-  };
+    carregar();
+  }, [anoSelecionado]);
 
-  if (!upload) {
+  if (carregando) {
     return (
-      <div className="max-w-4xl mx-auto">
-        <div className="page-header">
-          <h1 className="page-title">Dashboard</h1>
-          <p className="page-subtitle">
-            Visualização dos resultados da análise TRI
-          </p>
-        </div>
-        
-        <div className="glass-card p-8 text-center">
-          <AlertCircle className="w-12 h-12 text-[var(--warning)] mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
-            Nenhum dado carregado
-          </h3>
-          <Button className="btn-primary" asChild>
-            <Link href="/upload">Ir para Upload</Link>
-          </Button>
+      <div className="max-w-7xl mx-auto flex items-center justify-center h-[60vh]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary)] mx-auto mb-4" />
+          <p className="text-[var(--text-secondary)]">Carregando dados do ENEM {anoSelecionado}...</p>
         </div>
       </div>
     );
   }
 
+  if (!dados) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <div className="page-header">
+          <h1 className="page-title">Dashboard</h1>
+          <p className="page-subtitle">Dados não disponíveis</p>
+        </div>
+        <Card className="glass-card p-8 text-center">
+          <AlertCircle className="w-12 h-12 text-[var(--warning)] mx-auto mb-4" />
+          <p className="text-[var(--text-secondary)]">
+            Nenhum dado processado encontrado para {anoSelecionado}.
+            <br />
+            Execute o pipeline R para processar os microdados.
+          </p>
+        </Card>
+      </div>
+    );
+  }
+
+  const { metadata } = dados;
+  const areas: ENEMArea[] = ['CH', 'CN', 'LC', 'MT'];
+
+  // Preparar dados para gráficos
+  const dadosGraficoMedia = areas.map(area => ({
+    area,
+    nome: AREAS_INFO[area].nome,
+    media: dados[area]?.estatisticas.media || 0,
+    dp: dados[area]?.estatisticas.dp || 0,
+    cor: AREAS_INFO[area].cor,
+  }));
+
+  const dadosGraficoDistribuicao = areas.map(area => {
+    const stats = dados[area]?.estatisticas;
+    return {
+      area,
+      p10: stats?.p10 || 0,
+      p25: stats?.p25 || 0,
+      mediana: stats?.mediana || 0,
+      p75: stats?.p75 || 0,
+      p90: stats?.p90 || 0,
+    };
+  });
+
   return (
     <div className="max-w-7xl mx-auto animate-fade-in">
-      <div className="page-header flex items-end justify-between">
+      <div className="page-header flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="page-title">Dashboard</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="page-title">ENEM {anoSelecionado}</h1>
+            <Select value={anoSelecionado.toString()} onValueChange={(v) => setAnoSelecionado(parseInt(v))}>
+              <SelectTrigger className="w-28">
+                <Calendar className="w-4 h-4 mr-2" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="2024">2024</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <p className="page-subtitle">
-            Resultados da análise psicométrica
-            {preset && (
-              <span className="ml-2">
-                <Badge variant="secondary">{preset.tipo}</Badge>
-                <Badge variant="outline" className="ml-1">{preset.modelo_padrao}</Badge>
-              </span>
-            )}
+            Análise dos microdados oficiais do INEP
+            <span className="ml-2 text-xs text-[var(--text-tertiary)]">
+              Processado em: {new Date(metadata.data_processamento).toLocaleDateString('pt-BR')}
+            </span>
           </p>
         </div>
-        <div className="flex gap-2">
-          {!calibracao ? (
-            <Button 
-              className="btn-primary" 
-              onClick={handleCalibrar}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Play className="w-4 h-4 mr-2" />
-              )}
-              {isLoading ? 'Calibrando...' : 'Iniciar Análise'}
-            </Button>
-          ) : (
-            <>
-              <Button variant="outline" onClick={handleCalibrar}>
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Recalcular
-              </Button>
-              <Button variant="outline">
-                <Download className="w-4 h-4 mr-2" />
-                Exportar
-              </Button>
-            </>
-          )}
-        </div>
+        <Badge variant="secondary" className="text-base px-4 py-2">
+          <Users className="w-4 h-4 mr-2" />
+          {metadata.total_inscritos.toLocaleString('pt-BR')} inscritos
+        </Badge>
       </div>
 
-      {erro && (
-        <div className="mb-6 p-4 rounded-lg bg-[var(--warning)]/10 border border-[var(--warning)]/20 text-[var(--warning)]">
-          <p className="text-sm font-medium">API não disponível. Mostrando dados simulados.</p>
-          <p className="text-xs mt-1 opacity-80">{erro}</p>
-        </div>
-      )}
-
-      {/* KPI Cards */}
+      {/* KPIs por área */}
       <div className="grid grid-cols-4 gap-4 mb-8">
-        <div className="kpi-card">
-          <p className="kpi-label flex items-center gap-2">
-            <Users className="w-4 h-4" />
-            Candidatos
-          </p>
-          <p className="kpi-value">{upload.n_candidatos.toLocaleString()}</p>
-        </div>
-        <div className="kpi-card">
-          <p className="kpi-label flex items-center gap-2">
-            <FileQuestion className="w-4 h-4" />
-            Itens
-          </p>
-          <p className="kpi-value">{upload.n_itens}</p>
-        </div>
-        <div className="kpi-card">
-          <p className="kpi-label flex items-center gap-2">
-            <BarChart3 className="w-4 h-4" />
-            Média θ
-          </p>
-          <p className="kpi-value">
-            {escores 
-              ? (escores.reduce((a, s) => a + s.theta, 0) / escores.length).toFixed(2)
-              : '-'
-            }
-          </p>
-        </div>
-        <div className="kpi-card">
-          <p className="kpi-label flex items-center gap-2">
-            <Target className="w-4 h-4" />
-            Modelo
-          </p>
-          <p className="kpi-value text-2xl">{modelo}</p>
-        </div>
+        {areas.map((area) => {
+          const stats = dados[area]?.estatisticas;
+          if (!stats) return null;
+          
+          const AreaIcone = AREAS_INFO[area].icone;
+          const cor = AREAS_INFO[area].cor;
+          
+          return (
+            <Card 
+              key={area} 
+              className={`glass-card cursor-pointer transition-all hover:shadow-lg ${
+                areaDestaque === area ? 'ring-2 ring-[var(--primary)]' : ''
+              }`}
+              onClick={() => setAreaDestaque(area)}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div 
+                    className="w-10 h-10 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: `${cor}20` }}
+                  >
+                    <AreaIcone className="w-5 h-5" style={{ color: cor }} />
+                  </div>
+                  <Badge variant="outline">{area}</Badge>
+                </div>
+                <p className="text-sm text-[var(--text-secondary)] mb-1">
+                  {AREAS_INFO[area].nome}
+                </p>
+                <p className="text-3xl font-bold" style={{ color: cor }}>
+                  {stats.media.toFixed(1)}
+                </p>
+                <p className="text-xs text-[var(--text-tertiary)] mt-2">
+                  DP: {stats.dp.toFixed(1)} • {stats.n_presentes.toLocaleString('pt-BR')} presentes
+                </p>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
-      {/* Tabs de conteúdo */}
-      {calibracao && escores && (
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-flex">
-            <TabsTrigger value="overview">
-              <BarChart3 className="w-4 h-4 mr-2" />
-              Visão Geral
-            </TabsTrigger>
-            <TabsTrigger value="candidates">
-              <Table2 className="w-4 h-4 mr-2" />
-              Candidatos ({escores.length})
-            </TabsTrigger>
-            <TabsTrigger value="enem">
-              <GraduationCap className="w-4 h-4 mr-2" />
-              ENEM
-            </TabsTrigger>
-            <TabsTrigger value="items">
-              <FileQuestion className="w-4 h-4 mr-2" />
-              Itens
-            </TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue="visao-geral" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-flex">
+          <TabsTrigger value="visao-geral">Visão Geral</TabsTrigger>
+          <TabsTrigger value="distribuicao">Distribuição</TabsTrigger>
+          <TabsTrigger value="tabela">Tabela de Conversão</TabsTrigger>
+        </TabsList>
 
-          {/* Tab: Visão Geral */}
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-2 gap-6">
-              {/* ICC Curves */}
-              <Card className="glass-card col-span-2">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Curvas Características dos Itens (ICC)</span>
-                    <Badge variant="secondary">
-                      {calibracao.itens.length} itens calibrados
-                    </Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ICCCurve items={calibracao.itens} height={400} />
-                </CardContent>
-              </Card>
-
-              {/* Score Distribution */}
-              <Card className="glass-card">
-                <CardHeader>
-                  <CardTitle>Distribuição de Habilidade (θ)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ScoreDistribution scores={escores} height={300} />
-                </CardContent>
-              </Card>
-
-              {/* Estatísticas de Ajuste */}
-              <Card className="glass-card">
-                <CardHeader>
-                  <CardTitle>Estatísticas de Ajuste do Modelo</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-lg bg-[var(--bg-secondary)] text-center">
-                      <p className="text-2xl font-bold text-[var(--primary)]">
-                        {calibracao.estatisticas_ajuste.loglikelihood.toFixed(0)}
-                      </p>
-                      <p className="text-xs text-[var(--text-secondary)] mt-1">Log-Likelihood</p>
-                    </div>
-                    <div className="p-4 rounded-lg bg-[var(--bg-secondary)] text-center">
-                      <p className="text-2xl font-bold text-[var(--primary)]">
-                        {calibracao.estatisticas_ajuste.aic.toFixed(0)}
-                      </p>
-                      <p className="text-xs text-[var(--text-secondary)] mt-1">AIC</p>
-                    </div>
-                    <div className="p-4 rounded-lg bg-[var(--bg-secondary)] text-center">
-                      <p className="text-2xl font-bold text-[var(--primary)]">
-                        {calibracao.estatisticas_ajuste.bic.toFixed(0)}
-                      </p>
-                      <p className="text-xs text-[var(--text-secondary)] mt-1">BIC</p>
-                    </div>
-                    <div className="p-4 rounded-lg bg-[var(--bg-secondary)] text-center">
-                      <p className="text-2xl font-bold text-[calibracao.convergencia ? 'var(--success)' : 'var(--error)']">
-                        {calibracao.iteracoes}
-                      </p>
-                      <p className="text-xs text-[var(--text-secondary)] mt-1">
-                        Iterações
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Tab: Candidatos */}
-          <TabsContent value="candidates">
+        {/* Visão Geral */}
+        <TabsContent value="visao-geral" className="space-y-6">
+          <div className="grid grid-cols-2 gap-6">
             <Card className="glass-card">
               <CardHeader>
-                <CardTitle>Escores TRI por Candidato</CardTitle>
+                <CardTitle>Médias por Área</CardTitle>
               </CardHeader>
               <CardContent>
-                <CandidateTable
-                  candidatos={upload.candidatos}
-                  respostas={upload.dados}
-                  escores={escores}
-                  itens={calibracao.itens}
-                  area={enemArea}
-                  anoENEM={enemAno}
-                  mostrarENEM={preset?.tipo === 'ENEM'}
-                />
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={dadosGraficoMedia}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
+                    <XAxis dataKey="area" />
+                    <YAxis domain={[400, 550]} />
+                    <Tooltip 
+                      formatter={(value, name, props: any) => [
+                        `${Number(value).toFixed(1)} (DP: ${props.payload.dp.toFixed(1)})`,
+                        'Média'
+                      ]}
+                    />
+                    <Bar dataKey="media" radius={[4, 4, 0, 0]}>
+                      {dadosGraficoMedia.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.cor} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
               </CardContent>
             </Card>
-          </TabsContent>
 
-          {/* Tab: ENEM */}
-          <TabsContent value="enem">
-            <div className="grid grid-cols-2 gap-6">
-              <ENEMReferenceTable
-                area={enemArea}
-                ano={enemAno}
-                onAreaChange={setEnemArea}
-                onAnoChange={setEnemAno}
-              />
-              <Card className="glass-card">
-                <CardHeader>
-                  <CardTitle>Conversão de Theta para ENEM</CardTitle>
-                </CardHeader>
-                <CardContent>
+            <Card className="glass-card">
+              <CardHeader>
+                <CardTitle>Estatísticas Detalhadas - {areaDestaque}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {dados[areaDestaque] && (
                   <div className="space-y-4">
-                    <p className="text-sm text-[var(--text-secondary)]">
-                      A conversão é feita em dois passos:
-                    </p>
-                    <ol className="text-sm text-[var(--text-secondary)] space-y-2 list-decimal list-inside">
-                      <li>
-                        <strong>Theta → Acertos Esperados:</strong> Soma das probabilidades 
-                        de acerto dadas pelo modelo TRI
-                      </li>
-                      <li>
-                        <strong>Acertos → Nota ENEM:</strong> Interpolação linear na tabela 
-                        de referência do INEP
-                      </li>
-                    </ol>
-                    <div className="p-4 rounded-lg bg-[var(--bg-secondary)] text-sm">
-                      <p className="font-medium text-[var(--text-primary)] mb-2">
-                        Fórmula da Probabilidade (3PL):
-                      </p>
-                      <p className="font-mono text-[var(--text-secondary)]">
-                        P(θ) = c + (1-c) / (1 + e^(-a(θ-b)))
-                      </p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
+                        <p className="text-xs text-[var(--text-tertiary)] uppercase">Média</p>
+                        <p className="text-2xl font-bold">{dados[areaDestaque]!.estatisticas.media.toFixed(1)}</p>
+                      </div>
+                      <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
+                        <p className="text-xs text-[var(--text-tertiary)] uppercase">Mediana</p>
+                        <p className="text-2xl font-bold">{dados[areaDestaque]!.estatisticas.mediana.toFixed(1)}</p>
+                      </div>
+                      <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
+                        <p className="text-xs text-[var(--text-tertiary)] uppercase">Desvio Padrão</p>
+                        <p className="text-2xl font-bold">{dados[areaDestaque]!.estatisticas.dp.toFixed(1)}</p>
+                      </div>
+                      <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
+                        <p className="text-xs text-[var(--text-tertiary)] uppercase">Amplitude</p>
+                        <p className="text-2xl font-bold">
+                          {(dados[areaDestaque]!.estatisticas.max - dados[areaDestaque]!.estatisticas.min).toFixed(0)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-sm text-[var(--text-secondary)]">
+                      <p>Presentes: <strong>{dados[areaDestaque]!.estatisticas.n_presentes.toLocaleString('pt-BR')}</strong></p>
+                      <p>Faltantes: <strong>{dados[areaDestaque]!.estatisticas.n_faltantes.toLocaleString('pt-BR')}</strong></p>
+                      <p>Taxa de presença: <strong>
+                        {((dados[areaDestaque]!.estatisticas.n_presentes / (dados[areaDestaque]!.estatisticas.n_presentes + dados[areaDestaque]!.estatisticas.n_faltantes)) * 100).toFixed(1)}%
+                      </strong></p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Tab: Itens */}
-          <TabsContent value="items">
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle>Parâmetros dos Itens Calibrados</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                  {calibracao.itens.map((item) => (
-                    <div 
-                      key={item.cod}
-                      className="p-4 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-light)]"
-                    >
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="font-mono font-bold text-[var(--text-primary)]">
-                          {item.cod}
-                        </span>
-                        {item.status && (
-                          <Badge 
-                            variant={item.status === 'OK' ? 'default' : 'secondary'}
-                            className="text-xs"
-                          >
-                            {item.status}
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="space-y-1 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-[var(--text-tertiary)]">Dificuldade (b)</span>
-                          <span className="font-mono font-medium">{item.b.toFixed(3)}</span>
-                        </div>
-                        {item.a && (
-                          <div className="flex justify-between">
-                            <span className="text-[var(--text-tertiary)]">Discriminação (a)</span>
-                            <span className="font-mono">{item.a.toFixed(3)}</span>
-                          </div>
-                        )}
-                        {item.c && (
-                          <div className="flex justify-between">
-                            <span className="text-[var(--text-tertiary)]">Acerto ao acaso (c)</span>
-                            <span className="font-mono">{item.c.toFixed(3)}</span>
-                          </div>
-                        )}
-                        {item.infit && (
-                          <div className="flex justify-between">
-                            <span className="text-[var(--text-tertiary)]">INFIT</span>
-                            <span className={`font-mono ${
-                              item.infit >= 0.7 && item.infit <= 1.3 
-                                ? 'text-[var(--success)]' 
-                                : 'text-[var(--warning)]'
-                            }`}>
-                              {item.infit.toFixed(2)}
-                            </span>
-                          </div>
-                        )}
-                        {item.outfit && (
-                          <div className="flex justify-between">
-                            <span className="text-[var(--text-tertiary)]">OUTFIT</span>
-                            <span className={`font-mono ${
-                              item.outfit >= 0.7 && item.outfit <= 1.3 
-                                ? 'text-[var(--success)]' 
-                                : 'text-[var(--warning)]'
-                            }`}>
-                              {item.outfit.toFixed(2)}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                )}
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
-      )}
+          </div>
+        </TabsContent>
 
-      {!calibracao && !isLoading && (
-        <div className="text-center py-16">
-          <BarChart3 className="w-16 h-16 text-[var(--border-medium)] mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-[var(--text-secondary)]">
-            Clique em "Iniciar Análise" para calibrar os itens e estimar escores
-          </h3>
-        </div>
-      )}
+        {/* Distribuição */}
+        <TabsContent value="distribuicao">
+          <Card className="glass-card">
+            <CardHeader>
+              <CardTitle>Distribuição Percentil por Área</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={dadosGraficoDistribuicao}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
+                  <XAxis dataKey="area" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="p10" name="P10" fill="#FF3B30" />
+                  <Bar dataKey="p25" name="P25" fill="#FF9500" />
+                  <Bar dataKey="mediana" name="Mediana" fill="#0071E3" />
+                  <Bar dataKey="p75" name="P75" fill="#34C759" />
+                  <Bar dataKey="p90" name="P90" fill="#5856D6" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Tabela de Conversão */}
+        <TabsContent value="tabela">
+          <Card className="glass-card">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span>Tabela de Conversão - {AREAS_INFO[areaDestaque].nome}</span>
+                <Select value={areaDestaque} onValueChange={(v) => setAreaDestaque(v as ENEMArea)}>
+                  <SelectTrigger className="w-24">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {areas.map(a => <SelectItem key={a} value={a}>{a}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-[var(--bg-secondary)] sticky top-0">
+                    <tr>
+                      <th className="p-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Acertos</th>
+                      <th className="p-3 text-right text-xs font-medium text-[var(--error)] uppercase">Mínima</th>
+                      <th className="p-3 text-right text-xs font-medium text-[var(--primary)] uppercase">Média</th>
+                      <th className="p-3 text-right text-xs font-medium text-[var(--success)] uppercase">Máxima</th>
+                      <th className="p-3 text-right text-xs font-medium text-[var(--text-secondary)] uppercase">Amplitude</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dados[areaDestaque]?.tabela_amplitude.map((row, idx) => {
+                      if (idx % 5 !== 0) return null; // Mostrar a cada 5 acertos
+                      const amplitude = (row.notaMax || 0) - (row.notaMin || 0);
+                      return (
+                        <tr key={row.acertos} className="border-b border-[var(--border-light)] hover:bg-[var(--bg-secondary)]">
+                          <td className="p-3 font-mono">{row.acertos}</td>
+                          <td className="p-3 text-right font-mono text-[var(--text-secondary)]">
+                            {row.notaMin?.toFixed(1) || '-'}
+                          </td>
+                          <td className="p-3 text-right font-mono font-bold text-[var(--primary)]">
+                            {row.notaMed?.toFixed(1) || '-'}
+                          </td>
+                          <td className="p-3 text-right font-mono text-[var(--text-secondary)]">
+                            {row.notaMax?.toFixed(1) || '-'}
+                          </td>
+                          <td className="p-3 text-right">
+                            <Badge variant={amplitude > 50 ? 'destructive' : 'secondary'} className="font-mono text-xs">
+                              ±{(amplitude / 2).toFixed(0)}
+                            </Badge>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

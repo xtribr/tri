@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "TRI Analytics - Análise Psicométrica",
-  description: "Sistema de análise psicométrica usando Teoria de Resposta ao Item (TRI)",
+  title: "ENEM Analytics - Análise de Microdados INEP",
+  description: "Sistema de análise comparativa dos dados oficiais do ENEM",
 };
 
 export default function RootLayout({
