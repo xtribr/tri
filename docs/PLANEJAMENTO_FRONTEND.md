@@ -670,6 +670,276 @@ gerar_tabela_enem <- function(mod, n_itens) {
 
 ---
 
+## 🗂️ Versionamento de Tabelas de Referência
+
+**Problema:** Tabelas ENEM mudam a cada ano (ENEM-2024-dificuldades.pdf, ENEM-2025, etc.)
+
+**Solução:** Sistema de versionamento com banco de dados
+
+### Estratégia de Gestão
+
+#### 1. Estrutura de Dados (PostgreSQL/SQLite)
+
+```sql
+-- Tabela principal de referências
+CREATE TABLE tabelas_referencia (
+  id SERIAL PRIMARY KEY,
+  exam_type VARCHAR(20) NOT NULL,        -- 'ENEM', 'ENAMED', 'SAEB'
+  year INTEGER NOT NULL,                  -- 2024, 2025, etc.
+  area VARCHAR(10),                       -- 'LC', 'CH', 'CN', 'MT' (ENEM)
+  n_itens INTEGER NOT NULL,
+  file_name VARCHAR(255),                 -- 'ENEM-2024-dificuldades.pdf'
+  file_hash VARCHAR(64),                  -- SHA-256 para integridade
+  created_at TIMESTAMP DEFAULT NOW(),
+  is_active BOOLEAN DEFAULT true,         -- Tabela atual em uso
+  metadata JSONB                          -- Informações extras
+);
+
+-- Dados da tabela (linhas)
+CREATE TABLE tabela_linhas (
+  id SERIAL PRIMARY KEY,
+  tabela_id INTEGER REFERENCES tabelas_referencia(id),
+  acertos INTEGER NOT NULL,
+  percentual DECIMAL(5,2),
+  nota_min DECIMAL(6,2),
+  nota_med DECIMAL(6,2),
+  nota_max DECIMAL(6,2),
+  amplitude DECIMAL(6,2),
+  UNIQUE(tabela_id, acertos)
+);
+
+-- Histórico de alterações
+CREATE TABLE tabela_audit (
+  id SERIAL PRIMARY KEY,
+  tabela_id INTEGER REFERENCES tabelas_referencia(id),
+  action VARCHAR(20),                     -- 'INSERT', 'UPDATE', 'DELETE'
+  changed_by VARCHAR(100),
+  changed_at TIMESTAMP DEFAULT NOW(),
+  old_values JSONB,
+  new_values JSONB
+);
+```
+
+#### 2. Upload de Nova Tabela de Referência
+
+**Fluxo no Frontend:**
+
+```tsx
+// Componente de upload de tabela de referência
+<ReferenceTableUpload
+  examType="ENEM"
+  year={2025}
+  area="CH"
+  onUpload={async (file, metadata) => {
+    // 1. Parse do PDF/Excel
+    const parsedData = await parseReferenceTable(file);
+    
+    // 2. Validação contra tabela anterior
+    const diff = await compareWithPrevious({
+      examType: 'ENEM',
+      year: 2024,
+      area: 'CH'
+    });
+    
+    // 3. Preview das diferenças
+    showDiffModal({
+      message: `Diferenças detectadas vs 2024:`,
+      changes: diff,
+      onConfirm: () => saveNewTable(parsedData)
+    });
+  }}
+/>
+```
+
+#### 3. Sistema de Versionamento
+
+```typescript
+// stores/referenceTableStore.ts
+interface ReferenceTableState {
+  // Tabelas disponíveis
+  availableTables: {
+    ENEM: { 2022: TableMeta[], 2023: TableMeta[], 2024: TableMeta[] },
+    ENAMED: { 2023: TableMeta[], 2024: TableMeta[] },
+    SAEB: { 2022: TableMeta[], 2023: TableMeta[], 2024: TableMeta[] }
+  };
+  
+  // Tabela ativa para comparação
+  activeTable: {
+    exam: string;
+    year: number;
+    area?: string;
+  };
+  
+  // Histórico de comparações
+  comparisonHistory: Array<{
+    date: string;
+    tables: [TableMeta, TableMeta];
+    differences: TableDiff[];
+  }>;
+}
+
+// Ações
+const useReferenceTableStore = create<ReferenceTableState>((set, get) => ({
+  // Alternar entre anos para comparação
+  compareYears: (exam, year1, year2) => {
+    const table1 = fetchTable(exam, year1);
+    const table2 = fetchTable(exam, year2);
+    return calculateDifferences(table1, table2);
+  },
+  
+  // Detectar drift (mudanças significativas)
+  detectSignificantChanges: (newTable, oldTable) => {
+    const threshold = 20; // pontos na escala ENEM
+    return newTable.filter((row, i) => 
+      Math.abs(row.notaMed - oldTable[i].notaMed) > threshold
+    );
+  }
+}));
+```
+
+#### 4. Interface de Gestão (Admin)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  📚 Gestão de Tabelas de Referência              [+ Upload] │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  🏛️ Tabelas Disponíveis                                     │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │ ENEM                                                    ││
+│  │ ├── 2025 (novo)          [⚠️ Revisar] [✓ Ativar]       ││
+│  │ ├── 2024 (ativo)         [👁️ Visualizar] [📊 Análise]  ││
+│  │ ├── 2023                 [👁️ Visualizar]               ││
+│  │ └── 2022                 [👁️ Visualizar]               ││
+│  │                                                         ││
+│  │ ENAMED                                                  ││
+│  │ └── 2024 (ativo)                                      ││
+│  └─────────────────────────────────────────────────────────┘│
+│                                                             │
+│  📊 Comparação de Versões                                   │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │ Comparar: [ENEM 2024 ▼] vs [ENEM 2025 ▼]   [Analisar]  ││
+│  │                                                         ││
+│  │ ⚠️ Diferenças Significativas:                           ││
+│  │ • 20-25 acertos: +15 pontos média (prova mais fácil)   ││
+│  │ • 35-40 acertos: -8 pontos média                       ││
+│  │                                                         ││
+│  │ [📈 Ver Gráfico Comparativo] [📄 Relatório]             ││
+│  └─────────────────────────────────────────────────────────┘│
+│                                                             │
+│  📋 Log de Alterações                                       │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │ Data       Usuário       Ação              Tabela       ││
+│  │ 14/01/25   admin@tri     Upload ENEM 2025  CH, CN      ││
+│  │ 10/01/25   admin@tri     Ativar ENEM 2024  Todas       ││
+│  │ 05/12/24   admin@tri     Upload ENEM 2024  LC, MT      ││
+│  └─────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### 5. Detecção de Mudanças Significativas (Drift)
+
+```typescript
+// Detecção automática de mudanças na prova
+interface TableDriftDetection {
+  detect: (oldTable: ENEMTable, newTable: ENEMTable) => DriftResult;
+}
+
+const detectTableDrift = (oldTable, newTable): DriftResult => {
+  const diffs = [];
+  
+  for (let i = 0; i < oldTable.length; i++) {
+    const oldRow = oldTable[i];
+    const newRow = newTable[i];
+    
+    const diff = {
+      acertos: i,
+      oldNota: oldRow.notaMed,
+      newNota: newRow.notaMed,
+      delta: newRow.notaMed - oldRow.notaMed,
+      percentChange: ((newRow.notaMed - oldRow.notaMed) / oldRow.notaMed) * 100
+    };
+    
+    // Thresholds para alerta
+    if (Math.abs(diff.delta) > 20) {
+      diff.severity = 'HIGH';
+      diffs.push(diff);
+    } else if (Math.abs(diff.delta) > 10) {
+      diff.severity = 'MEDIUM';
+      diffs.push(diff);
+    }
+  }
+  
+  return {
+    hasSignificantChanges: diffs.length > 0,
+    changes: diffs,
+    recommendation: diffs.length > 5 
+      ? 'Prova significativamente diferente. Considerar recalibração completa.'
+      : 'Mudanças pontuais. Ajuste na curva de notas pode ser suficiente.'
+  };
+};
+```
+
+#### 6. Backup e Auditoria
+
+```typescript
+// Backup automático antes de atualizar
+const backupCurrentTable = async (examType, year) => {
+  const currentTable = await fetchTable(examType, year);
+  
+  await db.query(`
+    INSERT INTO tabelas_backup 
+    SELECT * FROM tabelas_referencia 
+    WHERE exam_type = $1 AND year = $2
+  `, [examType, year]);
+  
+  // Log da ação
+  await auditLog.record({
+    action: 'BACKUP_CREATED',
+    table: `${examType}_${year}`,
+    timestamp: new Date(),
+    user: currentUser.id
+  });
+};
+```
+
+#### 7. API Endpoints para Versionamento
+
+```typescript
+// GET /api/tabelas-referencia
+// Lista todas as tabelas disponíveis
+{
+  "ENEM": {
+    "2025": { "areas": ["LC", "CH", "CN", "MT"], "status": "draft" },
+    "2024": { "areas": ["LC", "CH", "CN", "MT"], "status": "active" },
+    "2023": { "areas": ["LC", "CH", "CN", "MT"], "status": "archived" }
+  }
+}
+
+// GET /api/tabelas-referencia/ENEM/2024/CH
+// Retorna dados específicos da tabela
+
+// POST /api/tabelas-referencia
+// Upload de nova tabela
+{
+  "examType": "ENEM",
+  "year": 2025,
+  "area": "CH",
+  "data": [...],
+  "validateAgainst": "2024"  // Comparar com ano anterior
+}
+
+// GET /api/tabelas-referencia/compare?exam=ENEM&year1=2024&year2=2025
+// Comparação entre anos
+{
+  "differences": [...],
+  "significantChanges": true,
+  "recommendation": "..."
+}
+```
+
+---
+
 ## 🎨 Animações e Interações (Framer Motion)
 
 ```tsx
