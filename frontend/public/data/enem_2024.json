@@ -1,291 +1,286 @@
 {
   "metadata": {
     "ano": 2024,
-    "data_processamento": "2026-02-17 22:18:31",
-    "metodo": "dados_oficiais_inep",
-    "fonte": "Tabelas de conversao ENEM 2024 - INEP"
+    "metodo": "mirt_amostra_100k",
+    "data": "2026-02-17 22:51:21"
   },
   "MT": {
     "ano": 2024,
     "area": "MT",
     "n_itens": 45,
     "estatisticas": {
-      "n_presentes": 3004169,
-      "media": 527.1,
-      "mediana": 570,
-      "dp": 113.9,
-      "min": 369.4,
-      "max": 961.9
+      "n": 69103,
+      "media": 527
     },
     "tabela_amplitude": [
       {
         "acertos": 0,
-        "notaMin": 369.4,
+        "notaMin": 371,
         "notaMed": 371,
         "notaMax": 371
       },
       {
         "acertos": 1,
         "notaMin": 371,
-        "notaMed": 376.9,
+        "notaMed": 372.6,
         "notaMax": 409.3
       },
       {
         "acertos": 2,
-        "notaMin": 369.6,
-        "notaMed": 382.4,
-        "notaMax": 445
+        "notaMin": 371.1,
+        "notaMed": 380,
+        "notaMax": 440
       },
       {
         "acertos": 3,
         "notaMin": 344.6,
-        "notaMed": 389.3,
-        "notaMax": 479
+        "notaMed": 383.1,
+        "notaMax": 458.4
       },
       {
         "acertos": 4,
-        "notaMin": 371.3,
-        "notaMed": 396.5,
-        "notaMax": 509.1
+        "notaMin": 371.5,
+        "notaMed": 388.6,
+        "notaMax": 488
       },
       {
         "acertos": 5,
-        "notaMin": 348.9,
-        "notaMed": 404.8,
-        "notaMax": 535.9
+        "notaMin": 371.6,
+        "notaMed": 398.8,
+        "notaMax": 519.1
       },
       {
         "acertos": 6,
-        "notaMin": 342.8,
-        "notaMed": 414.2,
-        "notaMax": 557.4
+        "notaMin": 373.2,
+        "notaMed": 409.2,
+        "notaMax": 534
       },
       {
         "acertos": 7,
-        "notaMin": 367.9,
-        "notaMed": 425,
-        "notaMax": 576.1
+        "notaMin": 373.6,
+        "notaMed": 418.7,
+        "notaMax": 562.4
       },
       {
         "acertos": 8,
-        "notaMin": 365.2,
-        "notaMed": 437.5,
-        "notaMax": 597.5
+        "notaMin": 375.4,
+        "notaMed": 431.8,
+        "notaMax": 593.7
       },
       {
         "acertos": 9,
-        "notaMin": 357.5,
-        "notaMed": 451.9,
-        "notaMax": 609.3
+        "notaMin": 377.1,
+        "notaMed": 445.4,
+        "notaMax": 599.7
       },
       {
         "acertos": 10,
-        "notaMin": 364.6,
-        "notaMed": 468.9,
-        "notaMax": 623.1
+        "notaMin": 381,
+        "notaMed": 463.1,
+        "notaMax": 610.3
       },
       {
         "acertos": 11,
         "notaMin": 374,
-        "notaMed": 488.2,
-        "notaMax": 633.3
+        "notaMed": 486.2,
+        "notaMax": 625.5
       },
       {
         "acertos": 12,
-        "notaMin": 379.1,
-        "notaMed": 510.3,
-        "notaMax": 643.6
+        "notaMin": 382.2,
+        "notaMed": 511.8,
+        "notaMax": 642.5
       },
       {
         "acertos": 13,
-        "notaMin": 381.3,
-        "notaMed": 534.5,
-        "notaMax": 653.1
+        "notaMin": 391.2,
+        "notaMed": 541.6,
+        "notaMax": 647.2
       },
       {
         "acertos": 14,
-        "notaMin": 386,
-        "notaMed": 559.8,
-        "notaMax": 662.3
+        "notaMin": 394.9,
+        "notaMed": 570.3,
+        "notaMax": 653.3
       },
       {
         "acertos": 15,
-        "notaMin": 391.3,
-        "notaMed": 584,
-        "notaMax": 670.3
+        "notaMin": 399.9,
+        "notaMed": 596,
+        "notaMax": 664.3
       },
       {
         "acertos": 16,
-        "notaMin": 397.9,
-        "notaMed": 606.2,
-        "notaMax": 678.1
+        "notaMin": 404,
+        "notaMed": 617.5,
+        "notaMax": 674.7
       },
       {
         "acertos": 17,
-        "notaMin": 397.7,
-        "notaMed": 625.3,
-        "notaMax": 687.4
+        "notaMin": 443.8,
+        "notaMed": 633,
+        "notaMax": 678.6
       },
       {
         "acertos": 18,
-        "notaMin": 419.3,
-        "notaMed": 641.4,
-        "notaMax": 694.8
+        "notaMin": 464.8,
+        "notaMed": 647.2,
+        "notaMax": 687.8
       },
       {
         "acertos": 19,
-        "notaMin": 436.4,
-        "notaMed": 655.3,
-        "notaMax": 701.9
+        "notaMin": 497.2,
+        "notaMed": 659.2,
+        "notaMax": 697.6
       },
       {
         "acertos": 20,
-        "notaMin": 460.5,
-        "notaMed": 667.2,
-        "notaMax": 708.9
+        "notaMin": 532.3,
+        "notaMed": 670.6,
+        "notaMax": 703.3
       },
       {
         "acertos": 21,
-        "notaMin": 499.7,
-        "notaMed": 678.3,
-        "notaMax": 719.6
+        "notaMin": 594.8,
+        "notaMed": 680.2,
+        "notaMax": 712.7
       },
       {
         "acertos": 22,
-        "notaMin": 541.1,
-        "notaMed": 688.4,
-        "notaMax": 725.4
+        "notaMin": 595.3,
+        "notaMed": 690.5,
+        "notaMax": 723.2
       },
       {
         "acertos": 23,
-        "notaMin": 583.4,
-        "notaMed": 698.3,
-        "notaMax": 735.9
+        "notaMin": 622.1,
+        "notaMed": 699.4,
+        "notaMax": 730.1
       },
       {
         "acertos": 24,
-        "notaMin": 598.1,
-        "notaMed": 707.9,
-        "notaMax": 743.2
+        "notaMin": 649.9,
+        "notaMed": 708.6,
+        "notaMax": 735.1
       },
       {
         "acertos": 25,
-        "notaMin": 612.6,
-        "notaMed": 717.2,
-        "notaMax": 752.4
+        "notaMin": 680,
+        "notaMed": 718.2,
+        "notaMax": 747.5
       },
       {
         "acertos": 26,
-        "notaMin": 632.4,
-        "notaMed": 726.4,
-        "notaMax": 757.8
+        "notaMin": 687.8,
+        "notaMed": 727.6,
+        "notaMax": 752.7
       },
       {
         "acertos": 27,
-        "notaMin": 663.9,
-        "notaMed": 735.5,
-        "notaMax": 771.2
+        "notaMin": 697.5,
+        "notaMed": 736,
+        "notaMax": 758.9
       },
       {
         "acertos": 28,
-        "notaMin": 673.8,
-        "notaMed": 744.5,
-        "notaMax": 778.5
+        "notaMin": 695.5,
+        "notaMed": 744.8,
+        "notaMax": 767.9
       },
       {
         "acertos": 29,
-        "notaMin": 691.4,
-        "notaMed": 753.5,
+        "notaMin": 719.3,
+        "notaMed": 753.2,
         "notaMax": 788.1
       },
       {
         "acertos": 30,
-        "notaMin": 702.1,
-        "notaMed": 762.8,
-        "notaMax": 795.9
+        "notaMin": 725.8,
+        "notaMed": 763.4,
+        "notaMax": 790.4
       },
       {
         "acertos": 31,
-        "notaMin": 722.7,
-        "notaMed": 771.6,
-        "notaMax": 804.7
+        "notaMin": 737.6,
+        "notaMed": 772.7,
+        "notaMax": 792.9
       },
       {
         "acertos": 32,
         "notaMin": 737.5,
-        "notaMed": 780.8,
-        "notaMax": 814.4
+        "notaMed": 781.3,
+        "notaMax": 812.2
       },
       {
         "acertos": 33,
-        "notaMin": 752.9,
-        "notaMed": 790.5,
-        "notaMax": 827.4
+        "notaMin": 759.2,
+        "notaMed": 792.5,
+        "notaMax": 822.5
       },
       {
         "acertos": 34,
-        "notaMin": 756.6,
-        "notaMed": 799.9,
-        "notaMax": 836.5
+        "notaMin": 769.2,
+        "notaMed": 797.8,
+        "notaMax": 831.4
       },
       {
         "acertos": 35,
-        "notaMin": 772.3,
-        "notaMed": 810,
-        "notaMax": 849.4
+        "notaMin": 784.3,
+        "notaMed": 808.7,
+        "notaMax": 832.4
       },
       {
         "acertos": 36,
         "notaMin": 781.1,
-        "notaMed": 820.3,
-        "notaMax": 858.3
+        "notaMed": 820.1,
+        "notaMax": 843.3
       },
       {
         "acertos": 37,
-        "notaMin": 787.6,
-        "notaMed": 831.4,
-        "notaMax": 867.5
+        "notaMin": 811,
+        "notaMed": 831.3,
+        "notaMax": 860.8
       },
       {
         "acertos": 38,
-        "notaMin": 805,
-        "notaMed": 842.7,
+        "notaMin": 825.4,
+        "notaMed": 842.1,
         "notaMax": 877
       },
       {
         "acertos": 39,
-        "notaMin": 814.6,
-        "notaMed": 855.1,
-        "notaMax": 890.5
+        "notaMin": 829.5,
+        "notaMed": 856,
+        "notaMax": 884.5
       },
       {
         "acertos": 40,
-        "notaMin": 830.7,
+        "notaMin": 835,
         "notaMed": 868.4,
-        "notaMax": 901.2
+        "notaMax": 890.8
       },
       {
         "acertos": 41,
-        "notaMin": 841.6,
-        "notaMed": 882.4,
-        "notaMax": 915.1
+        "notaMin": 843.5,
+        "notaMed": 884,
+        "notaMax": 908.8
       },
       {
         "acertos": 42,
-        "notaMin": 857.2,
-        "notaMed": 899.1,
-        "notaMax": 927.7
+        "notaMin": 862.8,
+        "notaMed": 900.5,
+        "notaMax": 919.6
       },
       {
         "acertos": 43,
-        "notaMin": 876.8,
-        "notaMed": 918.2,
-        "notaMax": 940.6
+        "notaMin": 889.5,
+        "notaMed": 925.4,
+        "notaMax": 938.6
       },
       {
         "acertos": 44,
-        "notaMin": 904.9,
-        "notaMed": 938.6,
+        "notaMin": 921,
+        "notaMed": 941.5,
         "notaMax": 951.8
       },
       {
@@ -301,289 +296,285 @@
     "area": "CH",
     "n_itens": 45,
     "estatisticas": {
-      "n_presentes": 3161605,
-      "media": 512,
-      "mediana": 546.5,
-      "dp": 90.3,
-      "min": 283.8,
-      "max": 943.3
+      "n": 72877,
+      "media": 511.8
     },
     "tabela_amplitude": [
       {
         "acertos": 0,
         "notaMin": 283.8,
-        "notaMed": 312.3,
-        "notaMax": 340.8
+        "notaMed": 283.8,
+        "notaMax": 283.8
       },
       {
         "acertos": 1,
-        "notaMin": 312.3,
-        "notaMed": 340.8,
-        "notaMax": 369.3
+        "notaMin": 283.9,
+        "notaMed": 287.5,
+        "notaMax": 327.5
       },
       {
         "acertos": 2,
-        "notaMin": 340.8,
-        "notaMed": 369.3,
-        "notaMax": 387.5
+        "notaMin": 284.2,
+        "notaMed": 298.9,
+        "notaMax": 358.6
       },
       {
         "acertos": 3,
-        "notaMin": 369.3,
-        "notaMed": 387.5,
-        "notaMax": 405.7
+        "notaMin": 285.1,
+        "notaMed": 306.8,
+        "notaMax": 378.5
       },
       {
         "acertos": 4,
-        "notaMin": 387.5,
-        "notaMed": 405.7,
-        "notaMax": 418.5
+        "notaMin": 284.6,
+        "notaMed": 325.2,
+        "notaMax": 379.4
       },
       {
         "acertos": 5,
-        "notaMin": 405.7,
-        "notaMed": 418.5,
-        "notaMax": 431.3
+        "notaMin": 286.1,
+        "notaMed": 337,
+        "notaMax": 408.2
       },
       {
         "acertos": 6,
-        "notaMin": 418.5,
-        "notaMed": 431.3,
-        "notaMax": 444.1
+        "notaMin": 291.4,
+        "notaMed": 347.6,
+        "notaMax": 417
       },
       {
         "acertos": 7,
-        "notaMin": 431.3,
-        "notaMed": 444.1,
-        "notaMax": 456.9
+        "notaMin": 291.1,
+        "notaMed": 359.7,
+        "notaMax": 427.7
       },
       {
         "acertos": 8,
-        "notaMin": 444.1,
-        "notaMed": 456.9,
-        "notaMax": 469.7
+        "notaMin": 290.3,
+        "notaMed": 374.4,
+        "notaMax": 441.1
       },
       {
         "acertos": 9,
-        "notaMin": 456.9,
-        "notaMed": 469.7,
-        "notaMax": 482.5
+        "notaMin": 289.8,
+        "notaMed": 387.6,
+        "notaMax": 450.6
       },
       {
         "acertos": 10,
-        "notaMin": 469.7,
-        "notaMed": 482.5,
-        "notaMax": 495.3
+        "notaMin": 295.1,
+        "notaMed": 404.8,
+        "notaMax": 467.7
       },
       {
         "acertos": 11,
-        "notaMin": 482.5,
-        "notaMed": 495.3,
-        "notaMax": 508.1
+        "notaMin": 309.1,
+        "notaMed": 419.4,
+        "notaMax": 480.3
       },
       {
         "acertos": 12,
-        "notaMin": 495.3,
-        "notaMed": 508.1,
-        "notaMax": 520.9
+        "notaMin": 317.3,
+        "notaMed": 436.2,
+        "notaMax": 491
       },
       {
         "acertos": 13,
-        "notaMin": 508.1,
-        "notaMed": 520.9,
-        "notaMax": 533.7
+        "notaMin": 313.8,
+        "notaMed": 451.9,
+        "notaMax": 501.1
       },
       {
         "acertos": 14,
-        "notaMin": 520.9,
-        "notaMed": 533.7,
-        "notaMax": 546.5
+        "notaMin": 323.6,
+        "notaMed": 466.3,
+        "notaMax": 518.2
       },
       {
         "acertos": 15,
-        "notaMin": 533.7,
-        "notaMed": 546.5,
-        "notaMax": 559.3
+        "notaMin": 359.5,
+        "notaMed": 480.9,
+        "notaMax": 521.5
       },
       {
         "acertos": 16,
-        "notaMin": 546.5,
-        "notaMed": 559.3,
-        "notaMax": 572.1
+        "notaMin": 366.5,
+        "notaMed": 493.4,
+        "notaMax": 535.6
       },
       {
         "acertos": 17,
-        "notaMin": 559.3,
-        "notaMed": 572.1,
-        "notaMax": 584.9
+        "notaMin": 393.3,
+        "notaMed": 504.7,
+        "notaMax": 543.1
       },
       {
         "acertos": 18,
-        "notaMin": 572.1,
-        "notaMed": 584.9,
-        "notaMax": 597.7
+        "notaMin": 408.4,
+        "notaMed": 516.3,
+        "notaMax": 553.3
       },
       {
         "acertos": 19,
-        "notaMin": 584.9,
-        "notaMed": 597.7,
-        "notaMax": 610.5
+        "notaMin": 452.5,
+        "notaMed": 526.1,
+        "notaMax": 557.7
       },
       {
         "acertos": 20,
-        "notaMin": 597.7,
-        "notaMed": 610.5,
-        "notaMax": 623.3
+        "notaMin": 476,
+        "notaMed": 534.8,
+        "notaMax": 568.2
       },
       {
         "acertos": 21,
-        "notaMin": 610.5,
-        "notaMed": 623.3,
-        "notaMax": 636.1
+        "notaMin": 487.3,
+        "notaMed": 544.2,
+        "notaMax": 576.5
       },
       {
         "acertos": 22,
-        "notaMin": 623.3,
-        "notaMed": 636.1,
-        "notaMax": 648.9
+        "notaMin": 506.3,
+        "notaMed": 552.4,
+        "notaMax": 581
       },
       {
         "acertos": 23,
-        "notaMin": 636.1,
-        "notaMed": 648.9,
-        "notaMax": 661.7
+        "notaMin": 518.7,
+        "notaMed": 560.8,
+        "notaMax": 589.5
       },
       {
         "acertos": 24,
-        "notaMin": 648.9,
-        "notaMed": 661.7,
-        "notaMax": 674.5
+        "notaMin": 532.7,
+        "notaMed": 568.6,
+        "notaMax": 597.3
       },
       {
         "acertos": 25,
-        "notaMin": 661.7,
-        "notaMed": 674.5,
-        "notaMax": 687.3
+        "notaMin": 541.7,
+        "notaMed": 576.1,
+        "notaMax": 603.6
       },
       {
         "acertos": 26,
-        "notaMin": 674.5,
-        "notaMed": 687.3,
-        "notaMax": 700.1
+        "notaMin": 542,
+        "notaMed": 583.5,
+        "notaMax": 612.9
       },
       {
         "acertos": 27,
-        "notaMin": 687.3,
-        "notaMed": 700.1,
-        "notaMax": 712.9
+        "notaMin": 558.7,
+        "notaMed": 591.6,
+        "notaMax": 617.7
       },
       {
         "acertos": 28,
-        "notaMin": 700.1,
-        "notaMed": 712.9,
-        "notaMax": 725.7
+        "notaMin": 566.1,
+        "notaMed": 599.6,
+        "notaMax": 626.1
       },
       {
         "acertos": 29,
-        "notaMin": 712.9,
-        "notaMed": 725.7,
-        "notaMax": 738.5
+        "notaMin": 574.5,
+        "notaMed": 607.5,
+        "notaMax": 633.2
       },
       {
         "acertos": 30,
-        "notaMin": 725.7,
-        "notaMed": 738.5,
-        "notaMax": 751.3
+        "notaMin": 575.4,
+        "notaMed": 615.6,
+        "notaMax": 641.9
       },
       {
         "acertos": 31,
-        "notaMin": 738.5,
-        "notaMed": 751.3,
-        "notaMax": 764.1
+        "notaMin": 591.4,
+        "notaMed": 624.4,
+        "notaMax": 649.7
       },
       {
         "acertos": 32,
-        "notaMin": 751.3,
-        "notaMed": 764.1,
-        "notaMax": 776.9
+        "notaMin": 598.3,
+        "notaMed": 632,
+        "notaMax": 660
       },
       {
         "acertos": 33,
-        "notaMin": 764.1,
-        "notaMed": 776.9,
-        "notaMax": 789.7
+        "notaMin": 606.4,
+        "notaMed": 641.2,
+        "notaMax": 675.3
       },
       {
         "acertos": 34,
-        "notaMin": 776.9,
-        "notaMed": 789.7,
-        "notaMax": 802.5
+        "notaMin": 610.8,
+        "notaMed": 650.1,
+        "notaMax": 678.4
       },
       {
         "acertos": 35,
-        "notaMin": 789.7,
-        "notaMed": 802.5,
-        "notaMax": 815.3
+        "notaMin": 624.5,
+        "notaMed": 660.8,
+        "notaMax": 691.4
       },
       {
         "acertos": 36,
-        "notaMin": 802.5,
-        "notaMed": 815.3,
-        "notaMax": 828.1
+        "notaMin": 639.4,
+        "notaMed": 670.1,
+        "notaMax": 699.2
       },
       {
         "acertos": 37,
-        "notaMin": 815.3,
-        "notaMed": 828.1,
-        "notaMax": 840.9
+        "notaMin": 648.9,
+        "notaMed": 682.8,
+        "notaMax": 712.9
       },
       {
         "acertos": 38,
-        "notaMin": 828.1,
-        "notaMed": 840.9,
-        "notaMax": 853.7
+        "notaMin": 660.3,
+        "notaMed": 694.5,
+        "notaMax": 724.8
       },
       {
         "acertos": 39,
-        "notaMin": 840.9,
-        "notaMed": 853.7,
-        "notaMax": 866.5
+        "notaMin": 671.1,
+        "notaMed": 707.8,
+        "notaMax": 744.1
       },
       {
         "acertos": 40,
-        "notaMin": 853.7,
-        "notaMed": 866.5,
-        "notaMax": 879.3
+        "notaMin": 690.7,
+        "notaMed": 721.5,
+        "notaMax": 760.3
       },
       {
         "acertos": 41,
-        "notaMin": 866.5,
-        "notaMed": 879.3,
-        "notaMax": 892.1
+        "notaMin": 695,
+        "notaMed": 733.9,
+        "notaMax": 771.5
       },
       {
         "acertos": 42,
-        "notaMin": 879.3,
-        "notaMed": 892.1,
-        "notaMax": 904.9
+        "notaMin": 713,
+        "notaMed": 754.9,
+        "notaMax": 795
       },
       {
         "acertos": 43,
-        "notaMin": 892.1,
-        "notaMed": 904.9,
-        "notaMax": 917.7
+        "notaMin": 733.6,
+        "notaMed": 770.3,
+        "notaMax": 808.2
       },
       {
         "acertos": 44,
-        "notaMin": 904.9,
-        "notaMed": 917.7,
-        "notaMax": 930.5
+        "notaMin": 768.8,
+        "notaMed": 797.6,
+        "notaMax": 817.4
       },
       {
         "acertos": 45,
-        "notaMin": 917.7,
-        "notaMed": 930.5,
-        "notaMax": 943.3
+        "notaMin": 819.7,
+        "notaMed": 819.7,
+        "notaMax": 819.7
       }
     ]
   },
@@ -592,610 +583,572 @@
     "area": "CN",
     "n_itens": 45,
     "estatisticas": {
-      "n_presentes": 3004312,
-      "media": 494,
-      "mediana": 635.5,
-      "dp": 120.5,
-      "min": 330.2,
-      "max": 1195.5
+      "n": 69106,
+      "media": 493.7
     },
     "tabela_amplitude": [
       {
         "acertos": 0,
-        "notaMin": 330.2,
-        "notaMed": 358.4,
-        "notaMax": 386.6
+        "notaMin": 342.1,
+        "notaMed": 342.1,
+        "notaMax": 342.1
       },
       {
         "acertos": 1,
-        "notaMin": 358.4,
-        "notaMed": 386.6,
-        "notaMax": 414.8
+        "notaMin": 342.2,
+        "notaMed": 350,
+        "notaMax": 386.1
       },
       {
         "acertos": 2,
-        "notaMin": 386.6,
-        "notaMed": 414.8,
-        "notaMax": 443
+        "notaMin": 342.3,
+        "notaMed": 351.5,
+        "notaMax": 386.8
       },
       {
         "acertos": 3,
-        "notaMin": 414.8,
-        "notaMed": 443,
-        "notaMax": 460.5
+        "notaMin": 342.3,
+        "notaMed": 359.5,
+        "notaMax": 420
       },
       {
         "acertos": 4,
-        "notaMin": 443,
-        "notaMed": 460.5,
-        "notaMax": 478
+        "notaMin": 342.9,
+        "notaMed": 368,
+        "notaMax": 451.8
       },
       {
         "acertos": 5,
-        "notaMin": 460.5,
-        "notaMed": 478,
-        "notaMax": 495.5
+        "notaMin": 334.4,
+        "notaMed": 374.1,
+        "notaMax": 464.9
       },
       {
         "acertos": 6,
-        "notaMin": 478,
-        "notaMed": 495.5,
-        "notaMax": 513
+        "notaMin": 343.5,
+        "notaMed": 385.9,
+        "notaMax": 480.6
       },
       {
         "acertos": 7,
-        "notaMin": 495.5,
-        "notaMed": 513,
-        "notaMax": 530.5
+        "notaMin": 346.7,
+        "notaMed": 398.2,
+        "notaMax": 490.3
       },
       {
         "acertos": 8,
-        "notaMin": 513,
-        "notaMed": 530.5,
-        "notaMax": 548
+        "notaMin": 350.1,
+        "notaMed": 410.9,
+        "notaMax": 518.4
       },
       {
         "acertos": 9,
-        "notaMin": 530.5,
-        "notaMed": 548,
-        "notaMax": 565.5
+        "notaMin": 349.9,
+        "notaMed": 425.9,
+        "notaMax": 525
       },
       {
         "acertos": 10,
-        "notaMin": 548,
-        "notaMed": 565.5,
-        "notaMax": 583
+        "notaMin": 353.7,
+        "notaMed": 443.3,
+        "notaMax": 532.4
       },
       {
         "acertos": 11,
-        "notaMin": 565.5,
-        "notaMed": 583,
-        "notaMax": 600.5
+        "notaMin": 357.2,
+        "notaMed": 462.1,
+        "notaMax": 550.6
       },
       {
         "acertos": 12,
-        "notaMin": 583,
-        "notaMed": 600.5,
-        "notaMax": 618
+        "notaMin": 365.8,
+        "notaMed": 478.8,
+        "notaMax": 559.6
       },
       {
         "acertos": 13,
-        "notaMin": 600.5,
-        "notaMed": 618,
-        "notaMax": 635.5
+        "notaMin": 355.5,
+        "notaMed": 497.3,
+        "notaMax": 575.2
       },
       {
         "acertos": 14,
-        "notaMin": 618,
-        "notaMed": 635.5,
-        "notaMax": 653
+        "notaMin": 375,
+        "notaMed": 515.1,
+        "notaMax": 586.3
       },
       {
         "acertos": 15,
-        "notaMin": 635.5,
-        "notaMed": 653,
-        "notaMax": 670.5
+        "notaMin": 373.9,
+        "notaMed": 532.4,
+        "notaMax": 593.3
       },
       {
         "acertos": 16,
-        "notaMin": 653,
-        "notaMed": 670.5,
-        "notaMax": 688
+        "notaMin": 414.8,
+        "notaMed": 546,
+        "notaMax": 593.8
       },
       {
         "acertos": 17,
-        "notaMin": 670.5,
-        "notaMed": 688,
-        "notaMax": 705.5
+        "notaMin": 458.1,
+        "notaMed": 558.7,
+        "notaMax": 602.7
       },
       {
         "acertos": 18,
-        "notaMin": 688,
-        "notaMed": 705.5,
-        "notaMax": 723
+        "notaMin": 468.5,
+        "notaMed": 569.7,
+        "notaMax": 611.2
       },
       {
         "acertos": 19,
-        "notaMin": 705.5,
-        "notaMed": 723,
-        "notaMax": 740.5
+        "notaMin": 507.5,
+        "notaMed": 581.5,
+        "notaMax": 622.6
       },
       {
         "acertos": 20,
-        "notaMin": 723,
-        "notaMed": 740.5,
-        "notaMax": 758
+        "notaMin": 531.6,
+        "notaMed": 590.4,
+        "notaMax": 631.1
       },
       {
         "acertos": 21,
-        "notaMin": 740.5,
-        "notaMed": 758,
-        "notaMax": 775.5
+        "notaMin": 540.9,
+        "notaMed": 598.7,
+        "notaMax": 641.4
       },
       {
         "acertos": 22,
-        "notaMin": 758,
-        "notaMed": 775.5,
-        "notaMax": 793
+        "notaMin": 562.9,
+        "notaMed": 607.6,
+        "notaMax": 640.7
       },
       {
         "acertos": 23,
-        "notaMin": 775.5,
-        "notaMed": 793,
-        "notaMax": 810.5
+        "notaMin": 572.1,
+        "notaMed": 617.9,
+        "notaMax": 649.6
       },
       {
         "acertos": 24,
-        "notaMin": 793,
-        "notaMed": 810.5,
-        "notaMax": 828
+        "notaMin": 572.7,
+        "notaMed": 623.6,
+        "notaMax": 658.8
       },
       {
         "acertos": 25,
-        "notaMin": 810.5,
-        "notaMed": 828,
-        "notaMax": 845.5
+        "notaMin": 586.3,
+        "notaMed": 633.2,
+        "notaMax": 666.1
       },
       {
         "acertos": 26,
-        "notaMin": 828,
-        "notaMed": 845.5,
-        "notaMax": 863
+        "notaMin": 599.1,
+        "notaMed": 640.3,
+        "notaMax": 677.3
       },
       {
         "acertos": 27,
-        "notaMin": 845.5,
-        "notaMed": 863,
-        "notaMax": 880.5
+        "notaMin": 611.7,
+        "notaMed": 647.7,
+        "notaMax": 675.4
       },
       {
         "acertos": 28,
-        "notaMin": 863,
-        "notaMed": 880.5,
-        "notaMax": 898
+        "notaMin": 625.9,
+        "notaMed": 656.8,
+        "notaMax": 683.3
       },
       {
         "acertos": 29,
-        "notaMin": 880.5,
-        "notaMed": 898,
-        "notaMax": 915.5
+        "notaMin": 627.5,
+        "notaMed": 665.4,
+        "notaMax": 696.4
       },
       {
         "acertos": 30,
-        "notaMin": 898,
-        "notaMed": 915.5,
-        "notaMax": 933
+        "notaMin": 642.3,
+        "notaMed": 674.2,
+        "notaMax": 698.8
       },
       {
         "acertos": 31,
-        "notaMin": 915.5,
-        "notaMed": 933,
-        "notaMax": 950.5
+        "notaMin": 646.5,
+        "notaMed": 683,
+        "notaMax": 710.2
       },
       {
         "acertos": 32,
-        "notaMin": 933,
-        "notaMed": 950.5,
-        "notaMax": 968
+        "notaMin": 663.4,
+        "notaMed": 691.2,
+        "notaMax": 716.4
       },
       {
         "acertos": 33,
-        "notaMin": 950.5,
-        "notaMed": 968,
-        "notaMax": 985.5
+        "notaMin": 661.2,
+        "notaMed": 700.9,
+        "notaMax": 728.4
       },
       {
         "acertos": 34,
-        "notaMin": 968,
-        "notaMed": 985.5,
-        "notaMax": 1003
+        "notaMin": 683.7,
+        "notaMed": 710.5,
+        "notaMax": 738.4
       },
       {
         "acertos": 35,
-        "notaMin": 985.5,
-        "notaMed": 1003,
-        "notaMax": 1020.5
+        "notaMin": 699.3,
+        "notaMed": 719.9,
+        "notaMax": 737.9
       },
       {
         "acertos": 36,
-        "notaMin": 1003,
-        "notaMed": 1020.5,
-        "notaMax": 1038
+        "notaMin": 701.4,
+        "notaMed": 726.5,
+        "notaMax": 757
       },
       {
         "acertos": 37,
-        "notaMin": 1020.5,
-        "notaMed": 1038,
-        "notaMax": 1055.5
+        "notaMin": 719.1,
+        "notaMed": 742.8,
+        "notaMax": 764.7
       },
       {
         "acertos": 38,
-        "notaMin": 1038,
-        "notaMed": 1055.5,
-        "notaMax": 1073
+        "notaMin": 717.1,
+        "notaMed": 750.8,
+        "notaMax": 776
       },
       {
         "acertos": 39,
-        "notaMin": 1055.5,
-        "notaMed": 1073,
-        "notaMax": 1090.5
+        "notaMin": 742.9,
+        "notaMed": 763,
+        "notaMax": 787.8
       },
       {
         "acertos": 40,
-        "notaMin": 1073,
-        "notaMed": 1090.5,
-        "notaMax": 1108
+        "notaMin": 743.1,
+        "notaMed": 771.1,
+        "notaMax": 798.7
       },
       {
         "acertos": 41,
-        "notaMin": 1090.5,
-        "notaMed": 1108,
-        "notaMax": 1125.5
+        "notaMin": 785.8,
+        "notaMed": 807.8,
+        "notaMax": 814.6
       },
       {
         "acertos": 42,
-        "notaMin": 1108,
-        "notaMed": 1125.5,
-        "notaMax": 1143
+        "notaMin": 811.7,
+        "notaMed": 818.2,
+        "notaMax": 821.4
       },
       {
         "acertos": 43,
-        "notaMin": 1125.5,
-        "notaMed": 1143,
-        "notaMax": 1160.5
+        "notaMin": 839.45,
+        "notaMed": 842.7,
+        "notaMax": 844.3
       },
       {
         "acertos": 44,
-        "notaMin": 1143,
-        "notaMed": 1160.5,
-        "notaMax": 1178
+        "notaMin": 867.2,
+        "notaMed": 867.2,
+        "notaMax": 867.2
       },
       {
         "acertos": 45,
-        "notaMin": 1160.5,
-        "notaMed": 1178,
-        "notaMax": 1195.5
+        "notaMin": 867.2,
+        "notaMed": 867.2,
+        "notaMax": 867.2
       }
     ]
   },
   "LC": {
     "ano": 2024,
     "area": "LC",
-    "n_itens": 50,
+    "n_itens": 45,
     "estatisticas": {
-      "n_presentes": 3165988,
-      "media": 524.8,
-      "mediana": 658.8,
-      "dp": 95.2,
-      "min": 298.8,
-      "max": 1047.6
+      "n": 72973,
+      "media": 524.7
     },
     "tabela_amplitude": [
       {
         "acertos": 0,
         "notaMin": 298.8,
-        "notaMed": 313.2,
-        "notaMax": 327.6
+        "notaMed": 310.5,
+        "notaMax": 322.1
       },
       {
         "acertos": 1,
-        "notaMin": 313.2,
-        "notaMed": 327.6,
-        "notaMax": 342
+        "notaMin": 300.9,
+        "notaMed": 304.4,
+        "notaMax": 329.1
       },
       {
         "acertos": 2,
-        "notaMin": 327.6,
-        "notaMed": 342,
-        "notaMax": 356.4
+        "notaMin": 302.6,
+        "notaMed": 304.5,
+        "notaMax": 349.5
       },
       {
         "acertos": 3,
-        "notaMin": 342,
-        "notaMed": 356.4,
-        "notaMax": 370.8
+        "notaMin": 300.5,
+        "notaMed": 324.8,
+        "notaMax": 386.2
       },
       {
         "acertos": 4,
-        "notaMin": 356.4,
-        "notaMed": 370.8,
-        "notaMax": 385.2
+        "notaMin": 305,
+        "notaMed": 337.3,
+        "notaMax": 410.3
       },
       {
         "acertos": 5,
-        "notaMin": 370.8,
-        "notaMed": 385.2,
-        "notaMax": 399.6
+        "notaMin": 301,
+        "notaMed": 347.6,
+        "notaMax": 413.7
       },
       {
         "acertos": 6,
-        "notaMin": 385.2,
-        "notaMed": 399.6,
-        "notaMax": 414
+        "notaMin": 299.7,
+        "notaMed": 357.6,
+        "notaMax": 427.5
       },
       {
         "acertos": 7,
-        "notaMin": 399.6,
-        "notaMed": 414,
-        "notaMax": 428.4
+        "notaMin": 301,
+        "notaMed": 372.5,
+        "notaMax": 447
       },
       {
         "acertos": 8,
-        "notaMin": 414,
-        "notaMed": 428.4,
-        "notaMax": 442.8
+        "notaMin": 303.8,
+        "notaMed": 386.5,
+        "notaMax": 449.6
       },
       {
         "acertos": 9,
-        "notaMin": 428.4,
-        "notaMed": 442.8,
-        "notaMax": 457.2
+        "notaMin": 300.8,
+        "notaMed": 400.5,
+        "notaMax": 470.3
       },
       {
         "acertos": 10,
-        "notaMin": 442.8,
-        "notaMed": 457.2,
-        "notaMax": 471.6
+        "notaMin": 305.8,
+        "notaMed": 413.4,
+        "notaMax": 481.3
       },
       {
         "acertos": 11,
-        "notaMin": 457.2,
-        "notaMed": 471.6,
-        "notaMax": 486
+        "notaMin": 311.7,
+        "notaMed": 428.3,
+        "notaMax": 497.8
       },
       {
         "acertos": 12,
-        "notaMin": 471.6,
-        "notaMed": 486,
-        "notaMax": 500.4
+        "notaMin": 320.7,
+        "notaMed": 441.4,
+        "notaMax": 501.2
       },
       {
         "acertos": 13,
-        "notaMin": 486,
-        "notaMed": 500.4,
-        "notaMax": 514.8
+        "notaMin": 311.7,
+        "notaMed": 455.2,
+        "notaMax": 510.9
       },
       {
         "acertos": 14,
-        "notaMin": 500.4,
-        "notaMed": 514.8,
-        "notaMax": 529.2
+        "notaMin": 332.3,
+        "notaMed": 466.4,
+        "notaMax": 519.9
       },
       {
         "acertos": 15,
-        "notaMin": 514.8,
-        "notaMed": 529.2,
-        "notaMax": 543.6
+        "notaMin": 348.7,
+        "notaMed": 477.6,
+        "notaMax": 523.4
       },
       {
         "acertos": 16,
-        "notaMin": 529.2,
-        "notaMed": 543.6,
-        "notaMax": 558
+        "notaMin": 345.1,
+        "notaMed": 488,
+        "notaMax": 536.8
       },
       {
         "acertos": 17,
-        "notaMin": 543.6,
-        "notaMed": 558,
-        "notaMax": 572.4
+        "notaMin": 385.1,
+        "notaMed": 497,
+        "notaMax": 547.9
       },
       {
         "acertos": 18,
-        "notaMin": 558,
-        "notaMed": 572.4,
-        "notaMax": 586.8
+        "notaMin": 392.8,
+        "notaMed": 505.3,
+        "notaMax": 554
       },
       {
         "acertos": 19,
-        "notaMin": 572.4,
-        "notaMed": 586.8,
-        "notaMax": 601.2
+        "notaMin": 435.7,
+        "notaMed": 513.6,
+        "notaMax": 561.5
       },
       {
         "acertos": 20,
-        "notaMin": 586.8,
-        "notaMed": 601.2,
-        "notaMax": 615.6
+        "notaMin": 459.7,
+        "notaMed": 521.3,
+        "notaMax": 561.7
       },
       {
         "acertos": 21,
-        "notaMin": 601.2,
-        "notaMed": 615.6,
-        "notaMax": 630
+        "notaMin": 454.9,
+        "notaMed": 528.4,
+        "notaMax": 572.4
       },
       {
         "acertos": 22,
-        "notaMin": 615.6,
-        "notaMed": 630,
-        "notaMax": 644.4
+        "notaMin": 454.7,
+        "notaMed": 535.5,
+        "notaMax": 583.9
       },
       {
         "acertos": 23,
-        "notaMin": 630,
-        "notaMed": 644.4,
-        "notaMax": 658.8
+        "notaMin": 493.6,
+        "notaMed": 542.2,
+        "notaMax": 584.2
       },
       {
         "acertos": 24,
-        "notaMin": 644.4,
-        "notaMed": 658.8,
-        "notaMax": 673.2
+        "notaMin": 500.3,
+        "notaMed": 548.7,
+        "notaMax": 597.3
       },
       {
         "acertos": 25,
-        "notaMin": 658.8,
-        "notaMed": 673.2,
-        "notaMax": 687.6
+        "notaMin": 507.9,
+        "notaMed": 555.7,
+        "notaMax": 602.6
       },
       {
         "acertos": 26,
-        "notaMin": 673.2,
-        "notaMed": 687.6,
-        "notaMax": 702
+        "notaMin": 505.8,
+        "notaMed": 562.2,
+        "notaMax": 606.2
       },
       {
         "acertos": 27,
-        "notaMin": 687.6,
-        "notaMed": 702,
-        "notaMax": 716.4
+        "notaMin": 520.1,
+        "notaMed": 568.6,
+        "notaMax": 618.4
       },
       {
         "acertos": 28,
-        "notaMin": 702,
-        "notaMed": 716.4,
-        "notaMax": 730.8
+        "notaMin": 539.8,
+        "notaMed": 574.7,
+        "notaMax": 629.4
       },
       {
         "acertos": 29,
-        "notaMin": 716.4,
-        "notaMed": 730.8,
-        "notaMax": 745.2
+        "notaMin": 547.2,
+        "notaMed": 581.4,
+        "notaMax": 636
       },
       {
         "acertos": 30,
-        "notaMin": 730.8,
-        "notaMed": 745.2,
-        "notaMax": 759.6
+        "notaMin": 543.5,
+        "notaMed": 588.2,
+        "notaMax": 645.3
       },
       {
         "acertos": 31,
-        "notaMin": 745.2,
-        "notaMed": 759.6,
-        "notaMax": 774
+        "notaMin": 557.6,
+        "notaMed": 594.7,
+        "notaMax": 650.4
       },
       {
         "acertos": 32,
-        "notaMin": 759.6,
-        "notaMed": 774,
-        "notaMax": 788.4
+        "notaMin": 561.6,
+        "notaMed": 601.3,
+        "notaMax": 670
       },
       {
         "acertos": 33,
-        "notaMin": 774,
-        "notaMed": 788.4,
-        "notaMax": 802.8
+        "notaMin": 568.4,
+        "notaMed": 608.9,
+        "notaMax": 682.3
       },
       {
         "acertos": 34,
-        "notaMin": 788.4,
-        "notaMed": 802.8,
-        "notaMax": 817.2
+        "notaMin": 582.6,
+        "notaMed": 617.3,
+        "notaMax": 692.6
       },
       {
         "acertos": 35,
-        "notaMin": 802.8,
-        "notaMed": 817.2,
-        "notaMax": 831.6
+        "notaMin": 589.6,
+        "notaMed": 625.6,
+        "notaMax": 685.6
       },
       {
         "acertos": 36,
-        "notaMin": 817.2,
-        "notaMed": 831.6,
-        "notaMax": 846
+        "notaMin": 597.7,
+        "notaMed": 633.5,
+        "notaMax": 720.5
       },
       {
         "acertos": 37,
-        "notaMin": 831.6,
-        "notaMed": 846,
-        "notaMax": 860.4
+        "notaMin": 603.6,
+        "notaMed": 643.5,
+        "notaMax": 723.2
       },
       {
         "acertos": 38,
-        "notaMin": 846,
-        "notaMed": 860.4,
-        "notaMax": 874.8
+        "notaMin": 616.8,
+        "notaMed": 653.4,
+        "notaMax": 731
       },
       {
         "acertos": 39,
-        "notaMin": 860.4,
-        "notaMed": 874.8,
-        "notaMax": 889.2
+        "notaMin": 624.1,
+        "notaMed": 664.6,
+        "notaMax": 729.7
       },
       {
         "acertos": 40,
-        "notaMin": 874.8,
-        "notaMed": 889.2,
-        "notaMax": 903.6
+        "notaMin": 642.4,
+        "notaMed": 677.8,
+        "notaMax": 712.9
       },
       {
         "acertos": 41,
-        "notaMin": 889.2,
-        "notaMed": 903.6,
-        "notaMax": 918
+        "notaMin": 661.4,
+        "notaMed": 695.2,
+        "notaMax": 730.2
       },
       {
         "acertos": 42,
-        "notaMin": 903.6,
-        "notaMed": 918,
-        "notaMax": 932.4
+        "notaMin": 676.8,
+        "notaMed": 709.7,
+        "notaMax": 740.3
       },
       {
         "acertos": 43,
-        "notaMin": 918,
-        "notaMed": 932.4,
-        "notaMax": 946.8
+        "notaMin": 698.5,
+        "notaMed": 728.2,
+        "notaMax": 765.3
       },
       {
         "acertos": 44,
-        "notaMin": 932.4,
-        "notaMed": 946.8,
-        "notaMax": 961.2
+        "notaMin": 749.7,
+        "notaMed": 753.5,
+        "notaMax": 757.2
       },
       {
         "acertos": 45,
-        "notaMin": 946.8,
-        "notaMed": 961.2,
-        "notaMax": 975.6
-      },
-      {
-        "acertos": 46,
-        "notaMin": 961.2,
-        "notaMed": 975.6,
-        "notaMax": 990
-      },
-      {
-        "acertos": 47,
-        "notaMin": 975.6,
-        "notaMed": 990,
-        "notaMax": 1004.4
-      },
-      {
-        "acertos": 48,
-        "notaMin": 990,
-        "notaMed": 1004.4,
-        "notaMax": 1018.8
-      },
-      {
-        "acertos": 49,
-        "notaMin": 1004.4,
-        "notaMed": 1018.8,
-        "notaMax": 1033.2
-      },
-      {
-        "acertos": 50,
-        "notaMin": 1018.8,
-        "notaMed": 1033.2,
-        "notaMax": 1047.6
+        "notaMin": 795.8,
+        "notaMed": 795.8,
+        "notaMax": 795.8
       }
     ]
   }

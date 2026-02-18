@@ -1,0 +1,636 @@
+{
+  "metadata": {
+    "ano": 2024,
+    "data_processamento": "2026-02-17 22:34:30",
+    "metodo": "mirt_microdados_reais",
+    "fonte": "TX_RESPOSTAS vs TX_GABARITO do INEP",
+    "amostra": 100000
+  },
+  "MT": {
+    "ano": 2024,
+    "area": "MT",
+    "n_itens": 45,
+    "estatisticas": {
+      "n_presentes": 0,
+      "media": "NA",
+      "mediana": {},
+      "dp": "NA",
+      "min": "Inf",
+      "max": "-Inf"
+    },
+    "tabela_amplitude": [
+      {
+        "acertos": 0
+      },
+      {
+        "acertos": 1
+      },
+      {
+        "acertos": 2
+      },
+      {
+        "acertos": 3
+      },
+      {
+        "acertos": 4
+      },
+      {
+        "acertos": 5
+      },
+      {
+        "acertos": 6
+      },
+      {
+        "acertos": 7
+      },
+      {
+        "acertos": 8
+      },
+      {
+        "acertos": 9
+      },
+      {
+        "acertos": 10
+      },
+      {
+        "acertos": 11
+      },
+      {
+        "acertos": 12
+      },
+      {
+        "acertos": 13
+      },
+      {
+        "acertos": 14
+      },
+      {
+        "acertos": 15
+      },
+      {
+        "acertos": 16
+      },
+      {
+        "acertos": 17
+      },
+      {
+        "acertos": 18
+      },
+      {
+        "acertos": 19
+      },
+      {
+        "acertos": 20
+      },
+      {
+        "acertos": 21
+      },
+      {
+        "acertos": 22
+      },
+      {
+        "acertos": 23
+      },
+      {
+        "acertos": 24
+      },
+      {
+        "acertos": 25
+      },
+      {
+        "acertos": 26
+      },
+      {
+        "acertos": 27
+      },
+      {
+        "acertos": 28
+      },
+      {
+        "acertos": 29
+      },
+      {
+        "acertos": 30
+      },
+      {
+        "acertos": 31
+      },
+      {
+        "acertos": 32
+      },
+      {
+        "acertos": 33
+      },
+      {
+        "acertos": 34
+      },
+      {
+        "acertos": 35
+      },
+      {
+        "acertos": 36
+      },
+      {
+        "acertos": 37
+      },
+      {
+        "acertos": 38
+      },
+      {
+        "acertos": 39
+      },
+      {
+        "acertos": 40
+      },
+      {
+        "acertos": 41
+      },
+      {
+        "acertos": 42
+      },
+      {
+        "acertos": 43
+      },
+      {
+        "acertos": 44
+      },
+      {
+        "acertos": 45
+      }
+    ]
+  },
+  "CH": {
+    "ano": 2024,
+    "area": "CH",
+    "n_itens": 45,
+    "estatisticas": {
+      "n_presentes": 0,
+      "media": "NA",
+      "mediana": {},
+      "dp": "NA",
+      "min": "Inf",
+      "max": "-Inf"
+    },
+    "tabela_amplitude": [
+      {
+        "acertos": 0
+      },
+      {
+        "acertos": 1
+      },
+      {
+        "acertos": 2
+      },
+      {
+        "acertos": 3
+      },
+      {
+        "acertos": 4
+      },
+      {
+        "acertos": 5
+      },
+      {
+        "acertos": 6
+      },
+      {
+        "acertos": 7
+      },
+      {
+        "acertos": 8
+      },
+      {
+        "acertos": 9
+      },
+      {
+        "acertos": 10
+      },
+      {
+        "acertos": 11
+      },
+      {
+        "acertos": 12
+      },
+      {
+        "acertos": 13
+      },
+      {
+        "acertos": 14
+      },
+      {
+        "acertos": 15
+      },
+      {
+        "acertos": 16
+      },
+      {
+        "acertos": 17
+      },
+      {
+        "acertos": 18
+      },
+      {
+        "acertos": 19
+      },
+      {
+        "acertos": 20
+      },
+      {
+        "acertos": 21
+      },
+      {
+        "acertos": 22
+      },
+      {
+        "acertos": 23
+      },
+      {
+        "acertos": 24
+      },
+      {
+        "acertos": 25
+      },
+      {
+        "acertos": 26
+      },
+      {
+        "acertos": 27
+      },
+      {
+        "acertos": 28
+      },
+      {
+        "acertos": 29
+      },
+      {
+        "acertos": 30
+      },
+      {
+        "acertos": 31
+      },
+      {
+        "acertos": 32
+      },
+      {
+        "acertos": 33
+      },
+      {
+        "acertos": 34
+      },
+      {
+        "acertos": 35
+      },
+      {
+        "acertos": 36
+      },
+      {
+        "acertos": 37
+      },
+      {
+        "acertos": 38
+      },
+      {
+        "acertos": 39
+      },
+      {
+        "acertos": 40
+      },
+      {
+        "acertos": 41
+      },
+      {
+        "acertos": 42
+      },
+      {
+        "acertos": 43
+      },
+      {
+        "acertos": 44
+      },
+      {
+        "acertos": 45
+      }
+    ]
+  },
+  "CN": {
+    "ano": 2024,
+    "area": "CN",
+    "n_itens": 45,
+    "estatisticas": {
+      "n_presentes": 0,
+      "media": "NA",
+      "mediana": {},
+      "dp": "NA",
+      "min": "Inf",
+      "max": "-Inf"
+    },
+    "tabela_amplitude": [
+      {
+        "acertos": 0
+      },
+      {
+        "acertos": 1
+      },
+      {
+        "acertos": 2
+      },
+      {
+        "acertos": 3
+      },
+      {
+        "acertos": 4
+      },
+      {
+        "acertos": 5
+      },
+      {
+        "acertos": 6
+      },
+      {
+        "acertos": 7
+      },
+      {
+        "acertos": 8
+      },
+      {
+        "acertos": 9
+      },
+      {
+        "acertos": 10
+      },
+      {
+        "acertos": 11
+      },
+      {
+        "acertos": 12
+      },
+      {
+        "acertos": 13
+      },
+      {
+        "acertos": 14
+      },
+      {
+        "acertos": 15
+      },
+      {
+        "acertos": 16
+      },
+      {
+        "acertos": 17
+      },
+      {
+        "acertos": 18
+      },
+      {
+        "acertos": 19
+      },
+      {
+        "acertos": 20
+      },
+      {
+        "acertos": 21
+      },
+      {
+        "acertos": 22
+      },
+      {
+        "acertos": 23
+      },
+      {
+        "acertos": 24
+      },
+      {
+        "acertos": 25
+      },
+      {
+        "acertos": 26
+      },
+      {
+        "acertos": 27
+      },
+      {
+        "acertos": 28
+      },
+      {
+        "acertos": 29
+      },
+      {
+        "acertos": 30
+      },
+      {
+        "acertos": 31
+      },
+      {
+        "acertos": 32
+      },
+      {
+        "acertos": 33
+      },
+      {
+        "acertos": 34
+      },
+      {
+        "acertos": 35
+      },
+      {
+        "acertos": 36
+      },
+      {
+        "acertos": 37
+      },
+      {
+        "acertos": 38
+      },
+      {
+        "acertos": 39
+      },
+      {
+        "acertos": 40
+      },
+      {
+        "acertos": 41
+      },
+      {
+        "acertos": 42
+      },
+      {
+        "acertos": 43
+      },
+      {
+        "acertos": 44
+      },
+      {
+        "acertos": 45
+      }
+    ]
+  },
+  "LC": {
+    "ano": 2024,
+    "area": "LC",
+    "n_itens": 50,
+    "estatisticas": {
+      "n_presentes": 0,
+      "media": "NA",
+      "mediana": {},
+      "dp": "NA",
+      "min": "Inf",
+      "max": "-Inf"
+    },
+    "tabela_amplitude": [
+      {
+        "acertos": 0
+      },
+      {
+        "acertos": 1
+      },
+      {
+        "acertos": 2
+      },
+      {
+        "acertos": 3
+      },
+      {
+        "acertos": 4
+      },
+      {
+        "acertos": 5
+      },
+      {
+        "acertos": 6
+      },
+      {
+        "acertos": 7
+      },
+      {
+        "acertos": 8
+      },
+      {
+        "acertos": 9
+      },
+      {
+        "acertos": 10
+      },
+      {
+        "acertos": 11
+      },
+      {
+        "acertos": 12
+      },
+      {
+        "acertos": 13
+      },
+      {
+        "acertos": 14
+      },
+      {
+        "acertos": 15
+      },
+      {
+        "acertos": 16
+      },
+      {
+        "acertos": 17
+      },
+      {
+        "acertos": 18
+      },
+      {
+        "acertos": 19
+      },
+      {
+        "acertos": 20
+      },
+      {
+        "acertos": 21
+      },
+      {
+        "acertos": 22
+      },
+      {
+        "acertos": 23
+      },
+      {
+        "acertos": 24
+      },
+      {
+        "acertos": 25
+      },
+      {
+        "acertos": 26
+      },
+      {
+        "acertos": 27
+      },
+      {
+        "acertos": 28
+      },
+      {
+        "acertos": 29
+      },
+      {
+        "acertos": 30
+      },
+      {
+        "acertos": 31
+      },
+      {
+        "acertos": 32
+      },
+      {
+        "acertos": 33
+      },
+      {
+        "acertos": 34
+      },
+      {
+        "acertos": 35
+      },
+      {
+        "acertos": 36
+      },
+      {
+        "acertos": 37
+      },
+      {
+        "acertos": 38
+      },
+      {
+        "acertos": 39
+      },
+      {
+        "acertos": 40
+      },
+      {
+        "acertos": 41
+      },
+      {
+        "acertos": 42
+      },
+      {
+        "acertos": 43
+      },
+      {
+        "acertos": 44
+      },
+      {
+        "acertos": 45
+      },
+      {
+        "acertos": 46
+      },
+      {
+        "acertos": 47
+      },
+      {
+        "acertos": 48
+      },
+      {
+        "acertos": 49
+      },
+      {
+        "acertos": 50
+      }
+    ]
+  }
+}
