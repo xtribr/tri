@@ -216,7 +216,7 @@ export default function Tabela2024Page() {
                   <Legend />
                   
                   <Area
-                    type="monotone"
+                    type="linear"
                     dataKey="min"
                     stroke="#FF3B30"
                     fill="#FF3B30"
@@ -225,7 +225,7 @@ export default function Tabela2024Page() {
                     name="Mínima"
                   />
                   <Area
-                    type="monotone"
+                    type="linear"
                     dataKey="max"
                     stroke="#34C759"
                     fill="#34C759"
@@ -234,11 +234,11 @@ export default function Tabela2024Page() {
                     name="Máxima"
                   />
                   <Line
-                    type="monotone"
+                    type="linear"
                     dataKey="med"
                     stroke="#0071E3"
                     strokeWidth={3}
-                    dot={false}
+                    dot={{ r: 3 }}
                     name="Média"
                   />
                 </ComposedChart>
