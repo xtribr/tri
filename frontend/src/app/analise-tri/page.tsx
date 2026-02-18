@@ -5,8 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Button } from '@/components/ui/button';
 import {
   BarChart,
   Bar,
@@ -26,10 +24,6 @@ import {
   TrendingDown, 
   TrendingUp, 
   Brain,
-  Target,
-  AlertTriangle,
-  Download,
-  FileQuestion,
   Palette
 } from 'lucide-react';
 import { ENEM_2024_DADOS } from '@/lib/api/enemData2024';
@@ -93,7 +87,6 @@ export default function AnaliseTRIPage() {
   // Identificar itens mais fáceis e difíceis
   const itensFaceis = [...itensFiltrados].sort((a, b) => a.b - b.b).slice(0, 10);
   const itensDificeis = [...itensFiltrados].sort((a, b) => b.b - a.b).slice(0, 10);
-  const itensDiscriminantes = [...itensFiltrados].sort((a, b) => b.a - a.a).slice(0, 10);
   
   // Dados para gráfico de dispersão TRI
   const dadosDispersao = itensFiltrados.map(item => ({
@@ -145,7 +138,7 @@ export default function AnaliseTRIPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="todos">Todos os cadernos</SelectItem>
-                {Object.entries(CORES_CADERNO).map(([nome, config]) => (
+                {Object.keys(CORES_CADERNO).map((nome) => (
                   <SelectItem key={nome} value={nome}>{nome}</SelectItem>
                 ))}
               </SelectContent>
@@ -168,7 +161,7 @@ export default function AnaliseTRIPage() {
           <CardContent className="p-6">
             <p className="text-sm text-[var(--text-tertiary)] uppercase mb-1">Média Nacional</p>
             <p className="text-3xl font-bold text-[var(--primary)]">
-              {stats?.media.toFixed(0)}
+              {stats?.media}
             </p>
             <p className="text-xs text-[var(--text-secondary)]">{stats?.n_presentes?.toLocaleString('pt-BR') ?? '-'} presentes</p>
           </CardContent>
@@ -242,9 +235,9 @@ export default function AnaliseTRIPage() {
                         return (
                           <div className="bg-white p-3 border rounded shadow-lg">
                             <p className="font-mono font-bold">{data.cod}</p>
-                            <p className="text-sm">Dificuldade (b): {data.x.toFixed(2)}</p>
-                            <p className="text-sm">Discriminação (a): {data.y.toFixed(2)}</p>
-                            <p className="text-sm">Acerto ao acaso (c): {(data.z / 100).toFixed(2)}</p>
+                            <p className="text-sm">Dificuldade (b): {data.x}</p>
+                            <p className="text-sm">Discriminação (a): {data.y}</p>
+                            <p className="text-sm">Acerto ao acaso (c): {data.z / 100}</p>
                             <p className="text-sm">Caderno: {data.caderno}</p>
                           </div>
                         );
@@ -348,10 +341,10 @@ export default function AnaliseTRIPage() {
                     </div>
                     <div className="text-right">
                       <p className="text-2xl font-bold text-[var(--success)]">
-                        b = {item.b.toFixed(2)}
+                        b = {item.b}
                       </p>
                       <p className="text-xs text-[var(--text-secondary)]">
-                        a = {item.a.toFixed(2)} | c = {item.c.toFixed(2)}
+                        a = {item.a} | c = {item.c}
                       </p>
                     </div>
                   </div>
@@ -399,10 +392,10 @@ export default function AnaliseTRIPage() {
                     </div>
                     <div className="text-right">
                       <p className="text-2xl font-bold text-[var(--error)]">
-                        b = {item.b.toFixed(2)}
+                        b = {item.b}
                       </p>
                       <p className="text-xs text-[var(--text-secondary)]">
-                        a = {item.a.toFixed(2)} | c = {item.c.toFixed(2)}
+                        a = {item.a} | c = {item.c}
                       </p>
                     </div>
                   </div>

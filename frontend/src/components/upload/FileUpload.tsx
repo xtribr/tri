@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useState } from 'react';
-import { Upload, FileSpreadsheet, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { FileSpreadsheet, AlertCircle, CheckCircle2 } from 'lucide-react';
 import Papa from 'papaparse';
 import { useAppStore } from '@/lib/stores/appStore';
 import type { DataUpload, ValidationResult } from '@/types';
@@ -60,12 +60,6 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
     if (itensZeroVariancia.length > 0) {
       avisos.push(`Itens com variância zero (todos acertam/erram): #${itensZeroVariancia.slice(0, 5).join(', ')}${itensZeroVariancia.length > 5 ? '...' : ''}`);
     }
-    
-    // Calcular estatísticas básicas
-    const nCandidatos = data.length;
-    const totalRespostas = nCandidatos * nItens;
-    const acertosTotais = data.reduce((sum, row) => sum + row.reduce((s, v) => s + v, 0), 0);
-    const mediaAcertos = (acertosTotais / totalRespostas) * 100;
     
     return {
       valido: erros.length === 0,

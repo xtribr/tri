@@ -296,6 +296,8 @@ mirt(dados, 1, itemtype="Rasch",
 
 5. **Equalização:** Para equalização entre diferentes aplicações do simulado ou com o ENAMED oficial, usar a função `multipleGroup()` do pacote mirt com as configurações recomendadas pelo INEP (ver `R/SKILL.md`).
 
+6. **Regra obrigatória de precisão TRI:** Nunca aplicar arredondamento (`round`, `toFixed`, `floor`, `ceil` ou equivalentes) em valores TRI (`theta`, `a`, `b`, `c`, erros padrão, probabilidades e notas derivadas). Em UI, relatórios, exports e APIs, exibir e persistir sempre os valores completos originais calculados.
+
 ## Backup e Versionamento
 
 **Repositório GitHub:** https://github.com/xtribr/tri.git

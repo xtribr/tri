@@ -24,7 +24,7 @@ export function ScoreDistribution({ scores, height = 300 }: ScoreDistributionPro
   const bins: Record<string, number> = {};
   
   for (let i = -4; i <= 4; i += binWidth) {
-    const label = `${i.toFixed(1)} - ${(i + binWidth).toFixed(1)}`;
+    const label = `${i} - ${i + binWidth}`;
     bins[label] = 0;
   }
   
@@ -32,7 +32,7 @@ export function ScoreDistribution({ scores, height = 300 }: ScoreDistributionPro
   scores.forEach((score) => {
     const binIndex = Math.floor((score.theta + 4) / binWidth);
     const start = -4 + binIndex * binWidth;
-    const label = `${start.toFixed(1)} - ${(start + binWidth).toFixed(1)}`;
+    const label = `${start} - ${start + binWidth}`;
     if (bins[label] !== undefined) {
       bins[label]++;
     }
@@ -77,13 +77,13 @@ export function ScoreDistribution({ scores, height = 300 }: ScoreDistributionPro
           formatter={(value) => [`${value} candidatos`, 'Frequência']}
         />
         <ReferenceLine 
-          x={`${mean.toFixed(1)} - ${(mean + binWidth).toFixed(1)}`}
+          x={`${mean} - ${mean + binWidth}`}
           stroke="#FF3B30" 
           strokeDasharray="5 5"
           label={{ value: 'Média', fill: '#FF3B30', fontSize: 10, position: 'top' }}
         />
         <ReferenceLine 
-          x={`${median.toFixed(1)} - ${(median + binWidth).toFixed(1)}`}
+          x={`${median} - ${median + binWidth}`}
           stroke="#FF9500" 
           strokeDasharray="5 5"
           label={{ value: 'Mediana', fill: '#FF9500', fontSize: 10, position: 'bottom' }}

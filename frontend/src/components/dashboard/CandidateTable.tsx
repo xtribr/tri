@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Download, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { ScoringResult, CalibratedItem } from '@/types';
-import { thetaParaNotaENEM, acertosParaNotaENEM, ENEMArea } from '@/lib/utils/enemConversion';
+import { acertosParaNotaENEM, ENEMArea } from '@/lib/utils/enemConversion';
 
 interface CandidateTableProps {
   candidatos: string[];
@@ -95,15 +95,15 @@ export function CandidateTable({
       d.nome,
       d.acertos,
       d.total,
-      d.taxaAcerto.toFixed(2),
-      d.theta.toFixed(3),
-      d.erroPadrao.toFixed(3),
-      d.ic95[0].toFixed(3),
-      d.ic95[1].toFixed(3),
+      d.taxaAcerto,
+      d.theta,
+      d.erroPadrao,
+      d.ic95[0],
+      d.ic95[1],
       ...(mostrarENEM && d.notaENEM ? [
-        d.notaENEM.min.toFixed(1),
-        d.notaENEM.med.toFixed(1),
-        d.notaENEM.max.toFixed(1),
+        d.notaENEM.min,
+        d.notaENEM.med,
+        d.notaENEM.max,
       ] : []),
     ]);
     
@@ -191,26 +191,26 @@ export function CandidateTable({
                       d.taxaAcerto >= 50 ? 'text-[var(--warning)]' :
                       'text-[var(--error)]'
                     }`}>
-                      {d.taxaAcerto.toFixed(1)}%
+                      {d.taxaAcerto}%
                     </span>
                   </TableCell>
                   <TableCell className="text-right font-mono font-medium">
-                    {d.theta.toFixed(3)}
+                    {d.theta}
                   </TableCell>
                   <TableCell className="text-right font-mono text-[var(--text-secondary)]">
-                    ±{d.erroPadrao.toFixed(3)}
+                    ±{d.erroPadrao}
                   </TableCell>
                   <TableCell className="text-right font-mono text-xs text-[var(--text-secondary)]">
-                    [{d.ic95[0].toFixed(2)}, {d.ic95[1].toFixed(2)}]
+                    [{d.ic95[0]}, {d.ic95[1]}]
                   </TableCell>
                   {mostrarENEM && d.notaENEM && (
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1 font-mono text-sm">
-                        <span className="text-[var(--text-tertiary)]">{d.notaENEM.min.toFixed(0)}</span>
+                        <span className="text-[var(--text-tertiary)]">{d.notaENEM.min}</span>
                         <span className="text-[var(--text-secondary)]">/</span>
-                        <span className="font-bold text-[var(--primary)]">{d.notaENEM.med.toFixed(0)}</span>
+                        <span className="font-bold text-[var(--primary)]">{d.notaENEM.med}</span>
                         <span className="text-[var(--text-secondary)]">/</span>
-                        <span className="text-[var(--text-tertiary)]">{d.notaENEM.max.toFixed(0)}</span>
+                        <span className="text-[var(--text-tertiary)]">{d.notaENEM.max}</span>
                       </div>
                     </TableCell>
                   )}

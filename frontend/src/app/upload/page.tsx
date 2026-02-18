@@ -39,7 +39,7 @@ export default function UploadPage() {
             </div>
             <div className="kpi-card">
               <p className="kpi-label">Média de Acertos</p>
-              <p className="kpi-value">{upload.media_acertos.toFixed(1)}%</p>
+              <p className="kpi-value">{upload.media_acertos}%</p>
             </div>
           </section>
         )}

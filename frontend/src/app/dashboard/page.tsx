@@ -17,21 +17,15 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  LineChart,
-  Line,
   Cell,
 } from 'recharts';
 import { 
   Users, 
   BookOpen, 
-  TrendingUp, 
-  TrendingDown,
-  School,
-  MapPin,
   Calendar,
   AlertCircle
 } from 'lucide-react';
-import { carregarDadosENEM, type ENEMCompleteData, type ENEMYearData } from '@/lib/api/enemData';
+import { carregarDadosENEM, type ENEMCompleteData } from '@/lib/api/enemData';
 import type { ENEMArea } from '@/lib/utils/enemConversion';
 
 const AREAS_INFO: Record<ENEMArea, { nome: string; cor: string; icone: React.ElementType }> = {
@@ -171,10 +165,10 @@ export default function DashboardPage() {
                   {AREAS_INFO[area].nome}
                 </p>
                 <p className="text-3xl font-bold" style={{ color: cor }}>
-                  {stats.media.toFixed(1)}
+                  {stats.media}
                 </p>
                 <p className="text-xs text-[var(--text-tertiary)] mt-2">
-                  DP: {stats.dp.toFixed(1)} • {stats.n_presentes.toLocaleString('pt-BR')} presentes
+                  DP: {stats.dp} • {stats.n_presentes.toLocaleString('pt-BR')} presentes
                 </p>
               </CardContent>
             </Card>
@@ -197,17 +191,12 @@ export default function DashboardPage() {
                 <CardTitle>Médias por Área</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
+                <ResponsiveContainer width="100%" height={300} minWidth={320} minHeight={240}>
                   <BarChart data={dadosGraficoMedia}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
                     <XAxis dataKey="area" />
                     <YAxis domain={[400, 550]} />
-                    <Tooltip 
-                      formatter={(value, name, props: any) => [
-                        `${Number(value).toFixed(1)} (DP: ${props.payload.dp.toFixed(1)})`,
-                        'Média'
-                      ]}
-                    />
+                    <Tooltip formatter={(value) => [Number(value), 'Média']} />
                     <Bar dataKey="media" radius={[4, 4, 0, 0]}>
                       {dadosGraficoMedia.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.cor} />
@@ -228,20 +217,20 @@ export default function DashboardPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
                         <p className="text-xs text-[var(--text-tertiary)] uppercase">Média</p>
-                        <p className="text-2xl font-bold">{dados[areaDestaque]!.estatisticas.media.toFixed(1)}</p>
+                        <p className="text-2xl font-bold">{dados[areaDestaque]!.estatisticas.media}</p>
                       </div>
                       <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
                         <p className="text-xs text-[var(--text-tertiary)] uppercase">Mediana</p>
-                        <p className="text-2xl font-bold">{dados[areaDestaque]!.estatisticas.mediana.toFixed(1)}</p>
+                        <p className="text-2xl font-bold">{dados[areaDestaque]!.estatisticas.mediana}</p>
                       </div>
                       <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
                         <p className="text-xs text-[var(--text-tertiary)] uppercase">Desvio Padrão</p>
-                        <p className="text-2xl font-bold">{dados[areaDestaque]!.estatisticas.dp.toFixed(1)}</p>
+                        <p className="text-2xl font-bold">{dados[areaDestaque]!.estatisticas.dp}</p>
                       </div>
                       <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
                         <p className="text-xs text-[var(--text-tertiary)] uppercase">Amplitude</p>
                         <p className="text-2xl font-bold">
-                          {(dados[areaDestaque]!.estatisticas.max - dados[areaDestaque]!.estatisticas.min).toFixed(0)}
+                          {dados[areaDestaque]!.estatisticas.max - dados[areaDestaque]!.estatisticas.min}
                         </p>
                       </div>
                     </div>
@@ -249,7 +238,7 @@ export default function DashboardPage() {
                       <p>Presentes: <strong>{dados[areaDestaque]!.estatisticas.n_presentes.toLocaleString('pt-BR')}</strong></p>
                       <p>Faltantes: <strong>{dados[areaDestaque]!.estatisticas.n_faltantes.toLocaleString('pt-BR')}</strong></p>
                       <p>Taxa de presença: <strong>
-                        {((dados[areaDestaque]!.estatisticas.n_presentes / (dados[areaDestaque]!.estatisticas.n_presentes + dados[areaDestaque]!.estatisticas.n_faltantes)) * 100).toFixed(1)}%
+                        {(dados[areaDestaque]!.estatisticas.n_presentes / (dados[areaDestaque]!.estatisticas.n_presentes + dados[areaDestaque]!.estatisticas.n_faltantes)) * 100}%
                       </strong></p>
                     </div>
                   </div>
@@ -266,7 +255,7 @@ export default function DashboardPage() {
               <CardTitle>Distribuição Percentil por Área</CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
+              <ResponsiveContainer width="100%" height={400} minWidth={320} minHeight={260}>
                 <BarChart data={dadosGraficoDistribuicao}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
                   <XAxis dataKey="area" />
@@ -321,24 +310,24 @@ export default function DashboardPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {dados[areaDestaque]?.tabela_amplitude.map((row, idx) => {
+                    {dados[areaDestaque]?.tabela_amplitude.map((row) => {
                       const amplitude = (row.notaMax || 0) - (row.notaMin || 0);
                       const isDestaque = row.acertos % 5 === 0;
                       return (
                         <tr key={row.acertos} className={`border-b border-[var(--border-light)] hover:bg-[var(--bg-secondary)] ${isDestaque ? 'bg-[var(--bg-secondary)]/50' : ''}`}>
                           <td className="p-3 font-mono">{row.acertos}</td>
                           <td className="p-3 text-right font-mono text-[var(--text-secondary)]">
-                            {row.notaMin?.toFixed(1) || '-'}
+                            {row.notaMin ?? '-'}
                           </td>
                           <td className="p-3 text-right font-mono font-bold text-[var(--primary)]">
-                            {row.notaMed?.toFixed(1) || '-'}
+                            {row.notaMed ?? '-'}
                           </td>
                           <td className="p-3 text-right font-mono text-[var(--text-secondary)]">
-                            {row.notaMax?.toFixed(1) || '-'}
+                            {row.notaMax ?? '-'}
                           </td>
                           <td className="p-3 text-right">
                             <Badge variant={amplitude > 50 ? 'destructive' : 'secondary'} className="font-mono text-xs">
-                              ±{(amplitude / 2).toFixed(0)}
+                              ±{amplitude / 2}
                             </Badge>
                           </td>
                         </tr>

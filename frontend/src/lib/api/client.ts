@@ -5,7 +5,6 @@
 
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import type {
-  ApiResponse,
   CalibrationResult,
   ScoringResult,
   CATSession,
@@ -189,7 +188,7 @@ export function thetaParaENEM(
 ): number {
   // ENEM usa escala com média 500 e DP 100
   // Theta tipicamente varia de -4 a 4
-  return Math.round(media_enem + theta * dp_enem);
+  return media_enem + theta * dp_enem;
 }
 
 // ============================================
@@ -302,7 +301,7 @@ export async function healthCheck(): Promise<{ status: string; version: string }
   try {
     const response = await apiClient.get('/health');
     return handleResponse(response);
-  } catch (error) {
+  } catch {
     throw new Error('API não está respondendo. Verifique se o servidor R Plumber está rodando em http://localhost:8000');
   }
 }

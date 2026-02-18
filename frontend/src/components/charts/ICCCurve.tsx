@@ -72,7 +72,7 @@ export function ICCCurve({ items, selectedItems, height = 400 }: ICCCurveProps) 
         <YAxis 
           domain={[0, 1]} 
           tickCount={6}
-          tickFormatter={(v) => `${(v * 100).toFixed(0)}%`}
+          tickFormatter={(v) => `${v * 100}%`}
           label={{ value: 'Probabilidade de Acerto', angle: -90, position: 'insideLeft' }}
           stroke="var(--text-secondary)"
           fontSize={12}
@@ -84,8 +84,8 @@ export function ICCCurve({ items, selectedItems, height = 400 }: ICCCurveProps) 
             borderRadius: 'var(--radius-md)',
             fontSize: 12,
           }}
-          formatter={(value) => [`${(Number(value) * 100).toFixed(1)}%`, 'Probabilidade']}
-          labelFormatter={(label) => `θ = ${Number(label).toFixed(2)}`}
+          formatter={(value) => [`${Number(value) * 100}%`, 'Probabilidade']}
+          labelFormatter={(label) => `θ = ${Number(label)}`}
         />
         <Legend 
           wrapperStyle={{ fontSize: 12 }}
@@ -99,7 +99,7 @@ export function ICCCurve({ items, selectedItems, height = 400 }: ICCCurveProps) 
             stroke={colors[idx % colors.length]}
             strokeWidth={2}
             dot={false}
-            name={`${item.cod} (b=${item.b.toFixed(2)})`}
+            name={`${item.cod} (b=${item.b})`}
           />
         ))}
       </LineChart>

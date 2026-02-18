@@ -20,7 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { TrendingUp, TrendingDown, BookOpen } from 'lucide-react';
-import { getTabelaInfo, getAnosDisponiveis, ENEMArea, acertosParaNotaENEM } from '@/lib/utils/enemConversion';
+import { getTabelaInfo, getAnosDisponiveis, ENEMArea } from '@/lib/utils/enemConversion';
 
 interface ENEMReferenceTableProps {
   area?: ENEMArea;
@@ -84,7 +84,7 @@ export function ENEMReferenceTable({
               Tabela de Conversão ENEM
             </CardTitle>
             <p className="text-sm text-[var(--text-secondary)] mt-1">
-              Escala de {notaMinima.toFixed(0)} a {notaMaxima.toFixed(0)} pontos
+              Escala de {notaMinima} a {notaMaxima} pontos
             </p>
           </div>
           <div className="flex gap-2">
@@ -119,15 +119,15 @@ export function ENEMReferenceTable({
             <p className="text-xs text-[var(--text-secondary)]">Itens</p>
           </div>
           <div className="p-3 rounded-lg bg-[var(--bg-secondary)] text-center">
-            <p className="text-2xl font-bold text-[var(--primary)]">{mediaGeral.toFixed(0)}</p>
+            <p className="text-2xl font-bold text-[var(--primary)]">{mediaGeral}</p>
             <p className="text-xs text-[var(--text-secondary)]">Média</p>
           </div>
           <div className="p-3 rounded-lg bg-[var(--bg-secondary)] text-center">
-            <p className="text-2xl font-bold text-[var(--success)]">{notaMaxima.toFixed(0)}</p>
+            <p className="text-2xl font-bold text-[var(--success)]">{notaMaxima}</p>
             <p className="text-xs text-[var(--text-secondary)]">Máxima</p>
           </div>
           <div className="p-3 rounded-lg bg-[var(--bg-secondary)] text-center">
-            <p className="text-2xl font-bold text-[var(--error)]">{notaMinima.toFixed(0)}</p>
+            <p className="text-2xl font-bold text-[var(--error)]">{notaMinima}</p>
             <p className="text-xs text-[var(--text-secondary)]">Mínima</p>
           </div>
         </div>
@@ -164,17 +164,17 @@ export function ENEMReferenceTable({
                       {row.acertos}
                     </TableCell>
                     <TableCell className="text-right font-mono text-[var(--text-secondary)]">
-                      {notaMin.toFixed(1)}
+                      {notaMin}
                     </TableCell>
                     <TableCell className="text-right font-mono font-bold text-[var(--primary)]">
-                      {notaMed.toFixed(1)}
+                      {notaMed}
                     </TableCell>
                     <TableCell className="text-right font-mono text-[var(--text-secondary)]">
-                      {notaMax.toFixed(1)}
+                      {notaMax}
                     </TableCell>
                     <TableCell className="text-right">
                       <Badge variant={amplitude > 100 ? 'destructive' : amplitude > 50 ? 'secondary' : 'outline'} className="font-mono text-xs">
-                        ±{((notaMax - notaMed)).toFixed(0)}
+                        ±{notaMax - notaMed}
                       </Badge>
                     </TableCell>
                   </TableRow>

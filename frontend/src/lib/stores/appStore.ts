@@ -13,7 +13,6 @@ import type {
   CalibrationResult,
   ScoringResult,
   CATSession,
-  AnalysisReport,
 } from '@/types';
 
 interface AppStore extends AppState {

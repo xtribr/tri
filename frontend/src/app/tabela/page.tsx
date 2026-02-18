@@ -29,8 +29,27 @@ const AREAS_CONFIG: Record<ENEMArea, { nome: string; cor: string; n_itens: numbe
   MT: { nome: 'Matemática', cor: '#AF52DE', n_itens: 45 },
 };
 
+interface HistoricoLinha {
+  acertos: number;
+  notaMin?: number | null;
+  notaMed?: number | null;
+  notaMax?: number | null;
+  min?: number | null;
+  med?: number | null;
+  max?: number | null;
+}
+
+interface HistoricoAno {
+  areas?: Partial<Record<ENEMArea, { tabela?: HistoricoLinha[] }>>;
+}
+
+interface LinhaComparacao {
+  acertos: number;
+  [ano: string]: number;
+}
+
 // Usar dados históricos do JSON
-const DADOS_HISTORICOS = enemData as Record<string, any>;
+const DADOS_HISTORICOS = enemData as Record<string, HistoricoAno>;
 
 export default function TabelaPage() {
   const [ano, setAno] = useState('2023');
@@ -43,7 +62,7 @@ export default function TabelaPage() {
   const dadosAno = DADOS_HISTORICOS[ano]?.areas?.[area]?.tabela || [];
   
   // Preparar dados para gráfico de amplitude
-  const dadosGrafico = dadosAno.map((row: any) => ({
+  const dadosGrafico = dadosAno.map((row: HistoricoLinha) => ({
     acertos: row.acertos,
     min: row.notaMin ?? row.min ?? 0,
     med: row.notaMed ?? row.med ?? 0,
@@ -54,16 +73,16 @@ export default function TabelaPage() {
   // Dados para comparação de médias entre anos
   const dadosComparacaoMed = anosComparacao.map(anoComp => {
     const tabela = DADOS_HISTORICOS[anoComp]?.areas?.[area]?.tabela || [];
-    return tabela.map((row: any) => ({
+    return tabela.map((row: HistoricoLinha) => ({
       acertos: row.acertos,
       [anoComp]: row.notaMed ?? row.med ?? 0,
     }));
   });
 
   // Merge dos dados de comparação
-  const dadosComparacaoMerged = dadosComparacaoMed.reduce((acc: any[], anoDados: any[]) => {
-    anoDados.forEach((row: any) => {
-      const existing = acc.find((r: any) => r.acertos === row.acertos);
+  const dadosComparacaoMerged = dadosComparacaoMed.reduce((acc: LinhaComparacao[], anoDados: LinhaComparacao[]) => {
+    anoDados.forEach((row: LinhaComparacao) => {
+      const existing = acc.find((r: LinhaComparacao) => r.acertos === row.acertos);
       if (existing) {
         Object.assign(existing, row);
       } else {
@@ -71,17 +90,17 @@ export default function TabelaPage() {
       }
     });
     return acc;
-  }, [] as any[]);
+  }, [] as LinhaComparacao[]);
 
   // Exportar CSV
   const exportarCSV = () => {
     const headers = ['Acertos', 'Nota_MIN', 'Nota_MED', 'Nota_MAX', 'Amplitude'];
     const rows = dadosGrafico.map((row: { acertos: number; min: number; med: number; max: number; amplitude: number }) => [
       row.acertos,
-      row.min.toFixed(1),
-      row.med.toFixed(1),
-      row.max.toFixed(1),
-      row.amplitude.toFixed(1),
+      row.min,
+      row.med,
+      row.max,
+      row.amplitude,
     ]);
     
     const csv = [headers.join(','), ...rows.map((r: (string | number)[]) => r.join(','))].join('\n');
@@ -148,7 +167,7 @@ export default function TabelaPage() {
           <CardContent className="p-6">
             <p className="text-sm text-[var(--text-tertiary)] uppercase mb-1">Nota Mínima</p>
             <p className="text-3xl font-bold text-[var(--error)]">
-              {dadosGrafico.length > 0 ? dadosGrafico[0].min.toFixed(0) : '-'}
+              {dadosGrafico.length > 0 ? dadosGrafico[0].min : '-'}
             </p>
             <p className="text-xs text-[var(--text-secondary)]">0 acertos</p>
           </CardContent>
@@ -158,7 +177,7 @@ export default function TabelaPage() {
           <CardContent className="p-6">
             <p className="text-sm text-[var(--text-tertiary)] uppercase mb-1">Nota Média (50%)</p>
             <p className="text-3xl font-bold text-[var(--primary)]">
-              {dadosGrafico.length > 0 ? dadosGrafico[Math.floor(dadosGrafico.length/2)].med.toFixed(0) : '-'}
+              {dadosGrafico.length > 0 ? dadosGrafico[Math.floor(dadosGrafico.length/2)].med : '-'}
             </p>
             <p className="text-xs text-[var(--text-secondary)]">
               {Math.floor(areaConfig.n_itens/2)} acertos
@@ -170,7 +189,7 @@ export default function TabelaPage() {
           <CardContent className="p-6">
             <p className="text-sm text-[var(--text-tertiary)] uppercase mb-1">Nota Máxima</p>
             <p className="text-3xl font-bold text-[var(--success)]">
-              {dadosGrafico.length > 0 ? dadosGrafico[dadosGrafico.length-1].max.toFixed(0) : '-'}
+              {dadosGrafico.length > 0 ? dadosGrafico[dadosGrafico.length-1].max : '-'}
             </p>
             <p className="text-xs text-[var(--text-secondary)]">{areaConfig.n_itens} acertos</p>
           </CardContent>
@@ -181,7 +200,7 @@ export default function TabelaPage() {
             <p className="text-sm text-[var(--text-tertiary)] uppercase mb-1">Amplitude Máx</p>
             <p className="text-3xl font-bold" style={{ color: areaConfig.cor }}>
               {dadosGrafico.length > 0 
-                ? Math.max(...dadosGrafico.map((d: { amplitude: number }) => d.amplitude)).toFixed(0) 
+                ? Math.max(...dadosGrafico.map((d: { amplitude: number }) => d.amplitude)) 
                 : '-'}
             </p>
             <p className="text-xs text-[var(--text-secondary)]">maior variação</p>
@@ -208,7 +227,7 @@ export default function TabelaPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={500}>
+              <ResponsiveContainer width="100%" height={500} minWidth={320} minHeight={300}>
                 <ComposedChart data={dadosGrafico}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
                   <XAxis 
@@ -227,10 +246,10 @@ export default function TabelaPage() {
                     }}
                     formatter={(value, name) => {
                       const numValue = Number(value);
-                      if (name === 'min') return [numValue.toFixed(1), 'Mínima'];
-                      if (name === 'med') return [numValue.toFixed(1), 'Média'];
-                      if (name === 'max') return [numValue.toFixed(1), 'Máxima'];
-                      return [numValue.toFixed(1), name];
+                      if (name === 'min') return [numValue, 'Mínima'];
+                      if (name === 'med') return [numValue, 'Média'];
+                      if (name === 'max') return [numValue, 'Máxima'];
+                      return [numValue, name];
                     }}
                   />
                   <Legend />
@@ -310,7 +329,7 @@ export default function TabelaPage() {
                 ))}
               </div>
               
-              <ResponsiveContainer width="100%" height={450}>
+              <ResponsiveContainer width="100%" height={450} minWidth={320} minHeight={300}>
                 <ComposedChart data={dadosComparacaoMerged}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
                   <XAxis dataKey="acertos" />
@@ -387,26 +406,26 @@ export default function TabelaPage() {
                         >
                           <td className="p-3 font-mono font-bold text-lg">{row.acertos}</td>
                           <td className="p-3 text-right font-mono text-[var(--text-secondary)]">
-                            {row.min.toFixed(1)}
+                            {row.min}
                           </td>
                           <td className="p-3 text-right font-mono font-bold text-[var(--primary)] text-lg">
-                            {row.med.toFixed(1)}
+                            {row.med}
                           </td>
                           <td className="p-3 text-right font-mono text-[var(--text-secondary)]">
-                            {row.max.toFixed(1)}
+                            {row.max}
                           </td>
                           <td className="p-3 text-right">
                             <Badge 
                               variant={row.amplitude > 100 ? 'destructive' : row.amplitude > 50 ? 'secondary' : 'outline'}
                               className="font-mono"
                             >
-                              {row.amplitude.toFixed(1)}
+                              {row.amplitude}
                             </Badge>
                           </td>
                           <td className="p-3 text-center">
                             {idx > 0 && (
                               <span className={`text-xs font-mono ${variacaoAnterior > 0 ? 'text-[var(--success)]' : 'text-[var(--error)]'}`}>
-                                {variacaoAnterior > 0 ? '+' : ''}{variacaoAnterior.toFixed(2)}%
+                                {variacaoAnterior > 0 ? '+' : ''}{variacaoAnterior}%
                               </span>
                             )}
                           </td>

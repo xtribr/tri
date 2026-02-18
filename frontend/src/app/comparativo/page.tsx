@@ -173,12 +173,12 @@ export default function ComparativoPage() {
                   Variação {anoBase} → {anoComparacao} ({areaSelecionada})
                 </p>
                 <p className="text-4xl font-bold mt-2">
-                  {variacao.media > 0 ? '+' : ''}{variacao.media.toFixed(1)} pts
+                  {variacao.media > 0 ? '+' : ''}{variacao.media} pts
                 </p>
               </div>
               <Badge variant={variacao.percentual > 0 ? 'default' : 'destructive'} className="text-lg px-4 py-2">
                 {variacao.percentual > 0 ? <TrendingUp className="w-5 h-5 inline mr-1" /> : <TrendingDown className="w-5 h-5 inline mr-1" />}
-                {variacao.percentual > 0 ? '+' : ''}{variacao.percentual.toFixed(2)}%
+                {variacao.percentual > 0 ? '+' : ''}{variacao.percentual}%
               </Badge>
             </div>
           </CardContent>
@@ -252,7 +252,7 @@ export default function ComparativoPage() {
                           {escola.n_escolas.toLocaleString()} escolas
                         </p>
                       </div>
-                      <p className="text-xl font-bold">{escola.media.toFixed(1)}</p>
+                      <p className="text-xl font-bold">{escola.media}</p>
                     </div>
                   ))}
                 </div>
@@ -279,7 +279,7 @@ export default function ComparativoPage() {
                     <div className="flex-1">
                       <div className="flex justify-between mb-1">
                         <span className="font-medium">{uf.uf}</span>
-                        <span className="font-mono">{uf.media.toFixed(1)}</span>
+                        <span className="font-mono">{uf.media}</span>
                       </div>
                       <div className="h-2 rounded-full bg-[var(--bg-secondary)]">
                         <div 

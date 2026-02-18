@@ -103,7 +103,7 @@ export default function Tabela2024Page() {
           </CardHeader>
           <CardContent>
             <div className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height={400} minWidth={320} minHeight={260}>
                 <ComposedChart data={dadosGrafico} margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
                   <defs>
                     <linearGradient id={`gradient-${area}`} x1="0" y1="0" x2="0" y2="1">
@@ -121,7 +121,7 @@ export default function Tabela2024Page() {
                     domain={[Math.floor(yMin * 0.95), Math.ceil(yMax * 1.02)]}
                     stroke="var(--text-secondary)"
                     tick={{ fill: 'var(--text-secondary)', fontSize: 12 }}
-                    tickFormatter={(value) => value.toFixed(0)}
+                    tickFormatter={(value) => String(value)}
                   />
                   <Tooltip 
                     contentStyle={{ 
@@ -185,32 +185,32 @@ export default function Tabela2024Page() {
               <div className="p-3 rounded-lg bg-[var(--background-elevated)]">
                 <div className="text-sm text-[var(--text-secondary)]">Média</div>
                 <div className="text-2xl font-bold" style={{ color: info.cor }}>
-                  {dadosArea?.estatisticas?.media?.toFixed(1) || '-'}
+                  {dadosArea?.estatisticas?.media ?? '-'}
                 </div>
               </div>
               
               <div className="p-3 rounded-lg bg-[var(--background-elevated)]">
                 <div className="text-sm text-[var(--text-secondary)]">Mediana</div>
                 <div className="text-2xl font-bold text-[var(--text-primary)]">
-                  {dadosArea?.estatisticas?.mediana?.toFixed(1) || '-'}
+                  {dadosArea?.estatisticas?.mediana ?? '-'}
                 </div>
               </div>
               
               <div className="p-3 rounded-lg bg-[var(--background-elevated)]">
                 <div className="text-sm text-[var(--text-secondary)]">Desvio Padrão</div>
                 <div className="text-2xl font-bold text-[var(--text-primary)]">
-                  {dadosArea?.estatisticas?.dp?.toFixed(1) || '-'}
+                  {dadosArea?.estatisticas?.dp ?? '-'}
                 </div>
               </div>
               
               <div className="grid grid-cols-2 gap-2 pt-2">
                 <div className="p-2 rounded bg-[var(--background-elevated)] text-center">
                   <div className="text-xs text-[var(--text-secondary)]">Mínimo</div>
-                  <div className="font-semibold">{dadosArea?.estatisticas?.min?.toFixed(1) || '-'}</div>
+                  <div className="font-semibold">{dadosArea?.estatisticas?.min ?? '-'}</div>
                 </div>
                 <div className="p-2 rounded bg-[var(--background-elevated)] text-center">
                   <div className="text-xs text-[var(--text-secondary)]">Máximo</div>
-                  <div className="font-semibold">{dadosArea?.estatisticas?.max?.toFixed(1) || '-'}</div>
+                  <div className="font-semibold">{dadosArea?.estatisticas?.max ?? '-'}</div>
                 </div>
               </div>
               
@@ -249,11 +249,11 @@ export default function Tabela2024Page() {
                     }`}
                   >
                     <td className="py-1.5 px-3 font-medium">{row.acertos}</td>
-                    <td className="text-right py-1.5 px-3 text-[var(--text-secondary)]">{row.notaMin.toFixed(1)}</td>
-                    <td className="text-right py-1.5 px-3 font-semibold" style={{ color: info.cor }}>{row.notaMed.toFixed(1)}</td>
-                    <td className="text-right py-1.5 px-3 text-[var(--text-secondary)]">{row.notaMax.toFixed(1)}</td>
+                    <td className="text-right py-1.5 px-3 text-[var(--text-secondary)]">{row.notaMin}</td>
+                    <td className="text-right py-1.5 px-3 font-semibold" style={{ color: info.cor }}>{row.notaMed}</td>
+                    <td className="text-right py-1.5 px-3 text-[var(--text-secondary)]">{row.notaMax}</td>
                     <td className="text-right py-1.5 px-3 text-xs text-[var(--text-tertiary)]">
-                      +{(row.notaMax - row.notaMin).toFixed(1)}
+                      +{row.notaMax - row.notaMin}
                     </td>
                   </tr>
                 ))}
