@@ -189,15 +189,15 @@ export default function Tabela2024Page() {
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={500}>
-                <ComposedChart data={dadosGrafico}>
+                <ComposedChart data={dadosGrafico} key={area}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
                   <XAxis 
                     dataKey="acertos" 
                     label={{ value: 'Número de Acertos', position: 'insideBottom', offset: -5 }}
                   />
                   <YAxis 
-                    domain={[stats.min * 0.9, stats.max * 1.05]}
                     label={{ value: 'Nota ENEM', angle: -90, position: 'insideLeft' }}
+                    tickFormatter={(value) => value.toFixed(0)}
                   />
                   <Tooltip 
                     contentStyle={{ 
