@@ -22,7 +22,8 @@ interface NavItem {
 
 const mainNavItems: NavItem[] = [
   { label: 'Dashboard ENEM', href: '/dashboard', icon: BarChart3, badge: '2024' },
-  { label: 'Tabela de Conversão', href: '/tabela', icon: Target },
+  { label: 'Tabela 2024 (Real)', href: '/tabela2024', icon: Target, badge: 'NOVO' },
+  { label: 'Tabela Histórica', href: '/tabela', icon: Target },
   { label: 'Comparativo Anual', href: '/comparativo', icon: TrendingUp },
   { label: 'Análise por Escola', href: '/escolas', icon: School },
 ];
