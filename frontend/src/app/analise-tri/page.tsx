@@ -49,7 +49,7 @@ const SIMULAR_PARAMETROS_TRI = (area: ENEMArea) => {
   const stats = ENEM_2024_DADOS[area]?.estatisticas;
   if (!stats) return [];
   
-  const nItens = area === 'LC' ? 50 : 45;
+  const nItens = 45;
   const itens = [];
   
   // Gerar itens com parâmetros 3PL realistas
@@ -78,7 +78,7 @@ export default function AnaliseTRIPage() {
   const areaConfig = {
     CH: { nome: 'Ciências Humanas', cor: '#0071E3', n_itens: 45 },
     CN: { nome: 'Ciências da Natureza', cor: '#34C759', n_itens: 45 },
-    LC: { nome: 'Linguagens e Códigos', cor: '#FF9500', n_itens: 50 },
+    LC: { nome: 'Linguagens e Códigos', cor: '#FF9500', n_itens: 45 },
     MT: { nome: 'Matemática', cor: '#AF52DE', n_itens: 45 },
   }[area];
   
@@ -170,7 +170,7 @@ export default function AnaliseTRIPage() {
             <p className="text-3xl font-bold text-[var(--primary)]">
               {stats?.media.toFixed(0)}
             </p>
-            <p className="text-xs text-[var(--text-secondary)]">{stats?.n_presentes.toLocaleString('pt-BR')} presentes</p>
+            <p className="text-xs text-[var(--text-secondary)]">{stats?.n_presentes?.toLocaleString('pt-BR') ?? '-'} presentes</p>
           </CardContent>
         </Card>
         

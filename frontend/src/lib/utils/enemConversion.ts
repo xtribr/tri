@@ -32,7 +32,7 @@ const enemTables = enemData as Record<string, ENEMTable>;
 
 /**
  * Converte número de acertos para nota ENEM usando interpolação linear
- * @param acertos - Número de acertos (0-45 para CH/CN/MT, 0-50 para LC)
+ * @param acertos - Número de acertos (0-45 para CH/CN/MT, 0-50 para LC em anos históricos, 0-45 para LC em 2024)
  * @param ano - Ano da prova de referência
  * @param area - Área do conhecimento
  * @param tipo - 'min' | 'med' | 'max'

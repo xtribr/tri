@@ -8,9 +8,10 @@ import type { ENEMArea } from '@/lib/utils/enemConversion';
 export interface ENEM2024Data {
   metadata: {
     ano: number;
-    data_processamento: string;
-    total_inscritos: number;
-    arquivo_fonte: string;
+    data_processamento?: string;
+    metodo?: string;
+    total_inscritos?: number;
+    arquivo_fonte?: string;
   };
   CH: ENEMAreaData;
   CN: ENEMAreaData;
@@ -23,16 +24,17 @@ export interface ENEMAreaData {
   area: ENEMArea;
   n_itens: number;
   estatisticas: {
-    n_presentes: number;
+    n_presentes?: number;
+    n?: number;
     media: number;
-    mediana: number;
-    dp: number;
-    min: number;
-    max: number;
-    p10: number;
-    p25: number;
-    p75: number;
-    p90: number;
+    mediana?: number;
+    dp?: number;
+    min?: number;
+    max?: number;
+    p10?: number;
+    p25?: number;
+    p75?: number;
+    p90?: number;
   };
   tabela_amplitude: Array<{
     acertos: number;
