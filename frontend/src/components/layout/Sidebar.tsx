@@ -11,6 +11,7 @@ import {
   School,
   GraduationCap,
   ChevronRight,
+  Brain,
 } from 'lucide-react';
 
 interface NavItem {
@@ -23,6 +24,7 @@ interface NavItem {
 const mainNavItems: NavItem[] = [
   { label: 'Dashboard ENEM', href: '/dashboard', icon: BarChart3, badge: '2024' },
   { label: 'Tabela 2024 (Real)', href: '/tabela2024', icon: Target, badge: 'NOVO' },
+  { label: 'Análise TRI 3PL', href: '/analise-tri', icon: Brain },
   { label: 'Tabela Histórica', href: '/tabela', icon: Target },
   { label: 'Comparativo Anual', href: '/comparativo', icon: TrendingUp },
   { label: 'Análise por Escola', href: '/escolas', icon: School },
