@@ -52,6 +52,10 @@ export default function Tabela2024Page() {
     amplitude: row.notaMax - row.notaMin,
   })) || [];
 
+  // Calcular min/max para o eixo Y
+  const yMin = Math.min(...dadosGrafico.map(d => d.min));
+  const yMax = Math.max(...dadosGrafico.map(d => d.max));
+
   // Exportar CSV
   const exportarCSV = () => {
     if (!tabela) return;
@@ -196,8 +200,10 @@ export default function Tabela2024Page() {
                     label={{ value: 'Número de Acertos', position: 'insideBottom', offset: -5 }}
                   />
                   <YAxis 
+                    domain={[Math.floor(yMin * 0.95), Math.ceil(yMax * 1.02)]}
                     label={{ value: 'Nota ENEM', angle: -90, position: 'insideLeft' }}
                     tickFormatter={(value) => value.toFixed(0)}
+                    allowDataOverflow={false}
                   />
                   <Tooltip 
                     contentStyle={{ 
